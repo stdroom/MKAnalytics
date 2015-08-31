@@ -11,7 +11,7 @@ public class TestGenerateEventObj extends AndroidTestCase {
     public void testGenerateEventObj(){
        PostObjEvent event= Poster.GenerateEventObj(getContext(), null);
        event.setTime("123");
-       PostObjEvent event2 = new PostObjEvent("", "", "", "123", "", "1.0", "sdsdsdddsdsddsds");
+       PostObjEvent event2 = new PostObjEvent("", "", "", "123", "", "1.0", "b40d7fb796674f8a5b6df2e254447d73");
        boolean d=false;
        if(event.equals(event2)){
            d=true;

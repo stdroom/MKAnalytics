@@ -24,6 +24,10 @@
         <activity
             android:name="com.ammike.android.MainActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.ammike.android.HtmlParseMainActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
