@@ -7,10 +7,14 @@
  *
 */
 
-package com.ammike.android;
+package com.ammike.android.adapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.ammike.android.R;
+import com.ammike.android.R.id;
+import com.ammike.android.R.layout;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -63,18 +67,18 @@ public class HtmlAdapter extends BaseAdapter{
 			holder = new ViewHolder();
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.item, null);
 			holder.title = (TextView)convertView.findViewById(R.id.title);
-			holder.url = (TextView)convertView.findViewById(R.id.url);
+			holder.time = (TextView)convertView.findViewById(R.id.time);
 			convertView.setTag(holder);
 		}
 		holder = (ViewHolder)convertView.getTag();
 		holder.title.setText(mList.get(position).get("title")+"");
-		holder.url.setText(mList.get(position).get("url")+"");
+		holder.time.setText(mList.get(position).get("time")+"");
 		return convertView;
 	}
 
 	static class ViewHolder{
 		TextView title;
-		TextView url;
+		TextView time;
 	}
 }
 
