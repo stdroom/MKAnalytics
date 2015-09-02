@@ -405,7 +405,7 @@ public class CommonUtil {
 		String str = context.getPackageName();
 		SharedPreferences localSharedPreferences = context
 				.getSharedPreferences("ums_agent_online_setting_" + str, 0);
-		int type = localSharedPreferences.getInt("ums_local_report_policy", 0);
+		int type = localSharedPreferences.getInt("ums_local_report_policy", 1);
 		return type;
 	}
 

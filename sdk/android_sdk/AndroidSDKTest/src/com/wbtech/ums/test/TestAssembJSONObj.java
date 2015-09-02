@@ -15,7 +15,7 @@ public class TestAssembJSONObj extends AndroidTestCase {
     public void testGetpostTagsJSONObj() throws JSONException{
        PostObjTag tagobj= Poster.GenerateTagObj(getContext(), "");
        JSONObject object=  AssembJSONObj.getpostTagsJSONObj(tagobj);
-       JSONObject object1 = new JSONObject("{\"tags\":\"\",\"deviceid\":\"860856012153353\",\"productkey\":\"sdsdsdddsdsddsds\"}");
+       JSONObject object1 = new JSONObject("{\"tags\":\"\",\"deviceid\":\"860856012153353\",\"productkey\":\"b40d7fb796674f8a5b6df2e254447d73\"}");
        boolean d = false;
        if(object.get("tags").equals(object1.getString("tags"))&&
                object.get("deviceid").equals(object1.getString("deviceid"))&&

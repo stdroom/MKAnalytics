@@ -12,7 +12,7 @@ public class TestGenerateTagObj extends AndroidTestCase {
         PostObjTag tagobj= Poster.GenerateTagObj(getContext(), "");
         PostObjTag tag = new PostObjTag();
         tag.setDeviceid("860856012153353");
-        tag.setProductkey("sdsdsdddsdsddsds");
+        tag.setProductkey("b40d7fb796674f8a5b6df2e254447d73");
         tag.setTags("");
         boolean d=false;
         if(tag.getDeviceid().equals(tagobj.getDeviceid())&&tag.getTags().equals(tagobj.getTags())&&tag.getProductkey().equals(tagobj.getProductkey())){
@@ -24,7 +24,7 @@ public class TestGenerateTagObj extends AndroidTestCase {
         PostObjTag tagobj= Poster.GenerateTagObj(getContext(), null);
         PostObjTag tag = new PostObjTag();
         tag.setDeviceid("860856012153353");
-        tag.setProductkey("sdsdsdddsdsddsds");
+        tag.setProductkey("b40d7fb796674f8a5b6df2e254447d73");
         tag.setTags(null);
         boolean d=false;
         if(tag.getDeviceid().equals(tagobj.getDeviceid())&&tag.getTags()==tagobj.getTags()&&tag.getProductkey().equals(tagobj.getProductkey())){

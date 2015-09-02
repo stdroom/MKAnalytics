@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <Button 
+        android:id="@+id/btn_event1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="event1"/>
+    <Button 
+        android:id="@+id/btn_event2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="event2"/>
+    <Button 
+        android:id="@+id/btn_event3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="event3"/>
+</LinearLayout>
+

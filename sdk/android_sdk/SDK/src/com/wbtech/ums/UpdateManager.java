@@ -176,7 +176,7 @@ public class UpdateManager {
 				.equals(android.os.Environment.MEDIA_MOUNTED);
 				if (!sdCardExist)
 				{
-					showSdDialog(mContext);					
+					showSdDialog(mContext);
 				}
 				String apkFile = saveFile;
 				File ApkFile = new File(apkFile);
