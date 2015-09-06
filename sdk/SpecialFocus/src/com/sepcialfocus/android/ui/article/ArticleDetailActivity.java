@@ -13,6 +13,7 @@
 package com.sepcialfocus.android.ui.article;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 
 import org.jsoup.Jsoup;
@@ -20,11 +21,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.sepcialfocus.android.BaseFragmentActivity;
@@ -51,6 +54,8 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
 	private TextView mArticleContentTv;
 	private String mArticleContentStr = "";
 	private String mArticlePostmetaStr = "";
+
+	private WebView mWebView;
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -66,6 +71,7 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
 		mArticleTitleTv = (TextView)findViewById(R.id.article_title);
 		mArticlePostmetaTv = (TextView)findViewById(R.id.article_postmeta);
 		mArticleContentTv = (TextView)findViewById(R.id.article_content);
+		mWebView = (WebView)findViewById(R.id.article_web);
 	}
 
 	class Loadhtml extends AsyncTask<String, String, String>
@@ -82,11 +88,18 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
                 if("".equals(urls)){
                 	return null;
                 }
+                CharSequence charSequence = null;
             	doc = Jsoup.connect(urls).timeout(5000).get();
                  Document content = Jsoup.parse(doc.toString());
+                 content.getElementById("hr336").remove();
                  Element article = content.getElementById("text");
+                 if(!content.select("p>img").attr("src").contains("http://")){
+                	 String urlLast = content.select("p>img").attr("src");
+                	 content.select("p>img").removeAttr("src");
+                	 content.select("p>img").attr("src",URLs.HOST+urlLast);
+                 }
                  mArticleContentStr = article.toString();
-                 
+                 return mArticleContentStr;
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -99,7 +112,9 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
             // TODO Auto-generated method stub
             super.onPostExecute(result);
 //            Log.d("doc", doc.toString().trim());
-            mArticleContentTv.setText(Html.fromHtml(mArticleContentStr));
+            mArticleContentTv.setText(result);
+            mWebView.getSettings().setJavaScriptEnabled(false);  
+            mWebView.loadData(mArticleContentStr, "text/html; charset=UTF-8", "utf-8");
         }
 
         @Override

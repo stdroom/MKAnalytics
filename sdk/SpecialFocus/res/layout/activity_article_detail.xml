@@ -28,6 +28,11 @@
 		        android:textColor="#333333"
 		        android:textSize="18sp"
 		        android:layout_height="wrap_content"/>
+		    
+		    <WebView 
+		        android:id="@+id/article_web"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -37,10 +37,12 @@ import android.widget.RelativeLayout;
 
 import com.mike.aframe.database.KJDB;
 import com.mike.aframe.utils.MD5Utils;
+import com.mike.aframe.utils.PreferenceHelper;
 import com.sepcialfocus.android.BaseApplication;
 import com.sepcialfocus.android.BaseFragment;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
+import com.sepcialfocus.android.config.AppConstant;
 import com.sepcialfocus.android.config.URLs;
 import com.sepcialfocus.android.ui.adapter.ArticleListAdapter;
 import com.sepcialfocus.android.ui.widget.PullToRefreshView;
@@ -84,6 +86,11 @@ public class ArticleFragment extends BaseFragment{
         try{
         	mArticleList = (ArrayList<ArticleItemBean>)
         			BaseApplication.globalContext.readObject(MD5Utils.md5(urls));
+        	nextUrl = PreferenceHelper.readString(mContext, 
+        			AppConstant.URL_NEXT_PAGE_FILE, MD5Utils.md5(urls));
+        	if(nextUrl!=null && !"".equals(nextUrl)){
+        		isPullRrefreshFlag = true;
+        	}
         	if(mArticleList==null){
         		mArticleList = new ArrayList<ArticleItemBean>();
             }
@@ -166,7 +173,9 @@ public class ArticleFragment extends BaseFragment{
                 	 }
                 	 Log.d("element",element.toString());
                  }
-                 
+                 if(!isPullRrefreshFlag){
+                	 nextUrl = "";
+                 }
                  Log.d("element", article.toString());
                  Elements elements = article.children();
                  ArrayList<ArticleItemBean> tempList = new ArrayList<ArticleItemBean>();
@@ -278,6 +287,8 @@ public class ArticleFragment extends BaseFragment{
 	public void onDestroy() {
 		super.onDestroy();
 		BaseApplication.globalContext.saveObject(mArticleList, MD5Utils.md5(urls));
+		PreferenceHelper.write(mContext, 
+    			AppConstant.URL_NEXT_PAGE_FILE, MD5Utils.md5(urls),nextUrl);
 	}
 
 	

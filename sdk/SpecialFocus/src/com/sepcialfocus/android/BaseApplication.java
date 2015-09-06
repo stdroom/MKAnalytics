@@ -23,7 +23,6 @@ import java.io.Serializable;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sepcialfocus.android.config.AppConfig;
-import com.sepcialfocus.android.config.ImageLoaderConfig;
 
 import android.app.Application;
 
@@ -42,9 +41,6 @@ public class BaseApplication extends Application{
 	public void onCreate() {
 		super.onCreate();
 		this.globalContext = this;
-		if (!ImageLoader.getInstance().isInited()) {
-	         ImageLoaderConfig.initImageLoader(this, AppConfig.getDownloadImgPath());
-        }
 	}
 	
 	

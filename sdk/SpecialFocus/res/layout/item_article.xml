@@ -8,7 +8,8 @@
         android:id="@+id/article_img"
         android:layout_width="100dp"
         android:layout_centerVertical="true"
-        android:layout_height="80dp"/>
+        android:layout_height="80dp"
+        android:src="@drawable/ic_launcher"/>
     
     <TextView
         android:id="@+id/article_title"

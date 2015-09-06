@@ -15,6 +15,7 @@ package com.sepcialfocus.android.ui.adapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.mike.aframe.bitmap.KJBitmap;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
@@ -39,10 +40,12 @@ import android.widget.TextView;
 public class ArticleListAdapter extends BaseAdapter{
 	ArrayList<ArticleItemBean> mList;
 	Context mContext;
+	KJBitmap kjBitMap = null;
 	
 	public ArticleListAdapter(Context context, ArrayList<ArticleItemBean> list){
 		this.mContext = context;
 		this.mList = list;
+		kjBitMap = KJBitmap.create();
 	}
 
 	@Override
@@ -103,7 +106,7 @@ public class ArticleListAdapter extends BaseAdapter{
 			}
 		}
 		if(!"".equals(bean.getImgUrl()+"")){
-			ImageLoader.getInstance().displayImage(URLs.HOST+bean.getImgUrl(), holder.mArticleImg);
+			kjBitMap.display(holder.mArticleImg,URLs.HOST+bean.getImgUrl());
 		}
 		return convertView;
 	}
