@@ -14,7 +14,6 @@ package com.sepcialfocus.android.ui.article;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,6 +21,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,11 +29,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.sepcialfocus.android.BaseFragment;
 import com.sepcialfocus.android.R;
+import com.sepcialfocus.android.bean.ArticleItemBean;
 import com.sepcialfocus.android.ui.adapter.ArticleListAdapter;
 import com.sepcialfocus.android.ui.widget.PullToRefreshView;
 
@@ -46,38 +49,54 @@ import com.sepcialfocus.android.ui.widget.PullToRefreshView;
  * @version 
  */
 public class ArticleFragment extends BaseFragment{
-	private ArrayList<HashMap<String,String>> mArticleList;
+	private ArrayList<ArticleItemBean> mArticleList;
 	private PullToRefreshView mArticle_pullview;
 	private ListView mArticle_listview;
 	private ArticleListAdapter mArticleAdapter;
 	private View mView;
 	private Context mContext;
+	private String urls = "";
 	
 	public ArticleFragment(){
+	}
+	
+	public ArticleFragment(String urls){
+		this.urls = urls;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.mContext = getActivity();
-		initView();
-		mArticleList = new ArrayList<HashMap<String,String>>();
+		mArticleList = new ArrayList<ArticleItemBean>();
 	}
 	
 	@Override
 	protected void initView() {
 		mLoadingLayout = (RelativeLayout)mView.findViewById(R.id.layout_loading_bar);
 		mArticle_listview = (ListView)mView.findViewById(R.id.article_listview);
+		mArticle_listview.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent(mContext,ArticleDetailActivity.class);
+				intent.putExtra("key", mArticleList.get(position));
+				startActivity(intent);
+			}
+		});
 		mArticle_pullview = (PullToRefreshView)mView.findViewById(R.id.article_pullview);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		mView = LayoutInflater.from(mContext).inflate(R.layout.fragment_article, null);
-		initView();
-		mArticleAdapter = new ArticleListAdapter(mContext, mArticleList);
-		mArticle_listview.setAdapter(mArticleAdapter);
+		if(mView==null){
+			mView = LayoutInflater.from(mContext).inflate(R.layout.fragment_article, null);
+			initView();
+			mArticleAdapter = new ArticleListAdapter(mContext, mArticleList);
+			mArticle_listview.setAdapter(mArticleAdapter);
+			new Loadhtml(urls).execute("","","");
+		}
 		return mView;
 	}
 
@@ -98,7 +117,7 @@ public class ArticleFragment extends BaseFragment{
                 }
             	doc = Jsoup.connect(urls).timeout(5000).get();
                  Document content = Jsoup.parse(doc.toString());
-                 Elements divs = content.getElementsByClass("articleList");
+                 Element article = content.getElementById("article");
 //                 Elements nextdivs = content.getElementsByClass("paging");
 //                 Document nextdivcontions = Jsoup.parse(nextdivs.toString());
 //                 Elements nextelement = nextdivcontions.getElementsByTag("a");
@@ -111,33 +130,74 @@ public class ArticleFragment extends BaseFragment{
 //                	 }
 //                	 Log.d("element",element.toString());
 //                 }
-                 Document divcontions = Jsoup.parse(divs.toString());
-                 Elements element = divcontions.getElementsByTag("li");
-                 Log.d("element", element.toString());
                  
-                 for(Element linkss : element)
+                 Log.d("element", article.toString());
+                 Elements elements = article.children();
+                 for(Element linkss : elements)
                  {	 
-                	 Elements ele = linkss.children();
-                	 String time = "";
+                	 if(!linkss.hasAttr("class") || !"post".equals(linkss.attr("class"))){
+                		 continue;
+                	 }
                 	 String title = "";
-                	 String link = "";
-                	 for(Element links: ele){
-                		 if(links.hasAttr("class")){
-            				 if("time".equals(links.attr("class"))){
-	                			 time = links.text();
-	                			 continue;
+                 	 String imgUrl = "";
+                 	 String summary = "";
+                 	 String link = "";
+                	 Elements titleImg = linkss.getElementsByTag("img");
+                	 for(Element bean : titleImg){
+                		 if(bean.hasAttr("alt")){	// 标题
+                			 title = bean.attr("alt");
+                		 }
+                		 if(bean.hasAttr("src")){	// 图像地址
+                			 imgUrl = bean.attr("src");
+                		 }
+                	 }
+                	 
+                	 Elements contentUrl = linkss.getElementsByClass("summary");
+                	 for(Element bean:contentUrl){
+                		 if(bean.hasAttr("class")){	// 内容摘要
+                			 summary = bean.text();
+                		 }
+                		 Elements contentBean = bean.getElementsByTag("a");
+                		 for(Element bean2:contentBean){
+                			 if(bean2.hasAttr("href")){	// 跳转链接
+                				 link = bean2.attr("href");
                 			 }
-                		 }else{
-                			 title = links.getElementsByTag("a").text();
-                    		 link   = links.select("a").attr("href").trim();
+                		 }
+                	 }
+                	 String time = "";
+                	 ArrayList<String> tags = new ArrayList<String>();
+                	 String tagUrl = "";
+                	 Elements timeTag = linkss.getElementsByClass("postmeta");
+                	 for(Element links: timeTag){
+                		 Elements spans = links.getElementsByTag("span");
+                		 for(Element bean:spans){
+                			 if(bean.hasAttr("class")){
+                				 if("left_author_span".equals(bean.attr("class"))){
+                					 time = bean.text();
+                					 continue;
+                				 }
+                				 if("left_tag_span".equals(bean.attr("class"))){
+                					 Elements childen = bean.children();
+                					 for(Element child:childen){
+                						 if(child.hasAttr("href")){
+                							 tagUrl = child.attr("href");
+                							 tags.add(child.text());
+                						 }
+                					 }
+                				 }
+                			 }
                 		 }
                 		 
+                		 
                 	 }
-                	 HashMap<String,String> values = new HashMap<String,String>();
-            		 values.put("title", title);
-            		 values.put("time", time);
-            		 values.put("url", link);
-            		 mArticleList.add(values);
+                	 ArticleItemBean bean = new ArticleItemBean();
+                	 bean.setTitle(title);
+                	 bean.setDate(time);
+                	 bean.setImgUrl(imgUrl);
+                	 bean.setSummary(summary);
+                	 bean.setUrl(link);
+                	 bean.setTags(tags);
+            		 mArticleList.add(bean);
                  }
                 
             } catch (IOException e) {

@@ -1,9 +1,9 @@
 /**
- * ¹¤³ÌÃû: SpecialFocus
- * ÎÄ¼þÃû: BaseApplication.java
- * °üÃû: com.sepcialfocus.android
- * ÈÕÆÚ: 2015-9-1ÏÂÎç8:47:25
- * Copyright (c) 2015, ±±¾©Ð¡Âí¹ýºÓ½ÌÓý¿Æ¼¼ÓÐÏÞ¹«Ë¾ All Rights Reserved.
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SpecialFocus
+ * ï¿½Ä¼ï¿½ï¿½ï¿½: BaseApplication.java
+ * ï¿½ï¿½ï¿½ï¿½: com.sepcialfocus.android
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1ï¿½ï¿½ï¿½ï¿½8:47:25
+ * Copyright (c) 2015, ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ All Rights Reserved.
  * http://www.xiaoma.com/
  * Mail: leixun@xiaoma.cn
  * QQ: 378640336
@@ -11,15 +11,34 @@
 */
 
 package com.sepcialfocus.android;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.sepcialfocus.android.config.AppConfig;
+import com.sepcialfocus.android.config.ImageLoaderConfig;
+
+import android.app.Application;
+
 /**
- * ÀàÃû: BaseApplication <br/>
- * ¹¦ÄÜ: TODO Ìí¼Ó¹¦ÄÜÃèÊö. <br/>
- * ÈÕÆÚ: 2015-9-1 ÏÂÎç8:47:25 <br/>
+ * ï¿½ï¿½ï¿½ï¿½: BaseApplication <br/>
+ * ï¿½ï¿½ï¿½ï¿½: TODO ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. <br/>
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1 ï¿½ï¿½ï¿½ï¿½8:47:25 <br/>
  *
  * @author   leixun
  * @version  	 
  */
-public class BaseApplication {
+public class BaseApplication extends Application{
+	/** å…¨å±€ä¸Šä¸‹æ–‡ */
+	public static BaseApplication globalContext;
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		this.globalContext = this;
+		if (!ImageLoader.getInstance().isInited()) {
+	         ImageLoaderConfig.initImageLoader(this, AppConfig.getDownloadImgPath());
+        }
+	}
+	
+	
 
 }
 

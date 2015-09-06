@@ -1,9 +1,9 @@
 /**
- * ¹¤³ÌÃû: SpecialFocus
- * ÎÄ¼þÃû: ArticleListAdapter.java
- * °üÃû: com.sepcialfocus.android.ui.adapter
- * ÈÕÆÚ: 2015-9-1ÏÂÎç9:00:03
- * Copyright (c) 2015, ±±¾©Ð¡Âí¹ýºÓ½ÌÓý¿Æ¼¼ÓÐÏÞ¹«Ë¾ All Rights Reserved.
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SpecialFocus
+ * ï¿½Ä¼ï¿½ï¿½ï¿½: ArticleListAdapter.java
+ * ï¿½ï¿½ï¿½ï¿½: com.sepcialfocus.android.ui.adapter
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1ï¿½ï¿½ï¿½ï¿½9:00:03
+ * Copyright (c) 2015, ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ All Rights Reserved.
  * http://www.xiaoma.com/
  * Mail: leixun@xiaoma.cn
  * QQ: 378640336
@@ -15,7 +15,10 @@ package com.sepcialfocus.android.ui.adapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sepcialfocus.android.R;
+import com.sepcialfocus.android.bean.ArticleItemBean;
+import com.sepcialfocus.android.config.URLs;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -26,18 +29,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * ÀàÃû: ArticleListAdapter <br/>
- * ¹¦ÄÜ: ÎÄÕÂÁÐ±íÊÊÅäÆ÷. <br/>
- * ÈÕÆÚ: 2015-9-1 ÏÂÎç9:00:03 <br/>
+ * ï¿½ï¿½ï¿½ï¿½: ArticleListAdapter <br/>
+ * ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. <br/>
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1 ï¿½ï¿½ï¿½ï¿½9:00:03 <br/>
  *
  * @author   leixun
  * @version  	 
  */
 public class ArticleListAdapter extends BaseAdapter{
-	ArrayList<HashMap<String,String>> mList;
+	ArrayList<ArticleItemBean> mList;
 	Context mContext;
 	
-	public ArticleListAdapter(Context context, ArrayList<HashMap<String,String>> list){
+	public ArticleListAdapter(Context context, ArrayList<ArticleItemBean> list){
 		this.mContext = context;
 		this.mList = list;
 	}
@@ -66,12 +69,42 @@ public class ArticleListAdapter extends BaseAdapter{
 			holder.mArticleImg = (ImageView)convertView.findViewById(R.id.article_img);
 			holder.mArticleTitleTv = (TextView)convertView.findViewById(R.id.article_title);
 			holder.mArticleContentTv = (TextView)convertView.findViewById(R.id.article_content);
-			holder.mArticleFromTv = (TextView)convertView.findViewById(R.id.article_from);
+			holder.mArticleTagOneTv = (TextView)convertView.findViewById(R.id.article_from1);
+			holder.mArticleTagTwoTv = (TextView)convertView.findViewById(R.id.article_from2);
+			holder.mArticleTagThrTv = (TextView)convertView.findViewById(R.id.article_from3);
 			holder.mArticleDateTv = (TextView)convertView.findViewById(R.id.article_date);
 			convertView.setTag(holder);
 		}
 		holder = (ViewHolder)convertView.getTag();
-		
+		ArticleItemBean bean  = mList.get(position);
+		holder.mArticleTitleTv.setText(bean.getTitle()+"");
+		holder.mArticleContentTv.setText(bean.getSummary()+"");
+		holder.mArticleDateTv.setText(bean.getDate()+"");
+		ArrayList<String> tags = bean.getTags();
+		holder.mArticleTagOneTv.setVisibility(View.GONE);
+		holder.mArticleTagTwoTv.setVisibility(View.GONE);
+		holder.mArticleTagThrTv.setVisibility(View.GONE);
+		if(tags!=null && tags.size()>0){
+			int length = tags.size();
+			if(length > 3){
+				length = 3;
+			}
+			switch(length){
+			case 3:
+				holder.mArticleTagThrTv.setVisibility(View.VISIBLE);
+				holder.mArticleTagThrTv.setText(tags.get(2));
+			case 2:
+				holder.mArticleTagTwoTv.setVisibility(View.VISIBLE);
+				holder.mArticleTagTwoTv.setText(tags.get(1));
+			case 1:
+				holder.mArticleTagOneTv.setVisibility(View.VISIBLE);
+				holder.mArticleTagOneTv.setText(tags.get(0));
+				break;
+			}
+		}
+		if(!"".equals(bean.getImgUrl()+"")){
+			ImageLoader.getInstance().displayImage(URLs.HOST+bean.getImgUrl(), holder.mArticleImg);
+		}
 		return convertView;
 	}
 	
@@ -80,7 +113,9 @@ public class ArticleListAdapter extends BaseAdapter{
 		TextView mArticleTitleTv;
 		TextView mArticleContentTv;
 		TextView mArticleDateTv;
-		TextView mArticleFromTv;
+		TextView mArticleTagOneTv;
+		TextView mArticleTagTwoTv;
+		TextView mArticleTagThrTv;
 		TextView mArticleLabelTv;
 	}
 

@@ -25,7 +25,6 @@
     <color name="zt_text_bg">#768082</color>
     
     <color name="app_color">#27C5A4</color>
-    <color name="app_bg_color">#F4F4F4</color>
     <color name="app_gray">#f4f4f4</color>    
     <color name="radiobutton_checked">#27C5A4</color>
     <color name="radiobutton_normal">#ffffff</color>
@@ -37,7 +36,7 @@
     <color name="app_divider_d7">#d7d7d7</color>
     
     <!-- app常用区域背景色 -->
-    <color name="app_common_column_bg_color">#f4f4f4</color>
+    <color name="app_bg_color">#F4F4F4</color>
     
     <!-- app常用字体颜色 -->
     <color name="text_color_white">#ffffff</color>

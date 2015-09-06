@@ -1,9 +1,9 @@
 /**
- * ¹¤³ÌÃû: SpecialFocus
- * ÎÄ¼þÃû: MainPagerAdapter.java
- * °üÃû: com.sepcialfocus.android.ui.adapter
- * ÈÕÆÚ: 2015-9-1ÏÂÎç9:38:19
- * Copyright (c) 2015, ±±¾©Ð¡Âí¹ýºÓ½ÌÓý¿Æ¼¼ÓÐÏÞ¹«Ë¾ All Rights Reserved.
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SpecialFocus
+ * ï¿½Ä¼ï¿½ï¿½ï¿½: MainPagerAdapter.java
+ * ï¿½ï¿½ï¿½ï¿½: com.sepcialfocus.android.ui.adapter
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1ï¿½ï¿½ï¿½ï¿½9:38:19
+ * Copyright (c) 2015, ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ All Rights Reserved.
  * http://www.xiaoma.com/
  * Mail: leixun@xiaoma.cn
  * QQ: 378640336
@@ -15,14 +15,17 @@ package com.sepcialfocus.android.ui.adapter;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import com.sepcialfocus.android.bean.NavBean;
+import com.sepcialfocus.android.config.URLs;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 /**
- * ÀàÃû: MainPagerAdapter <br/>
- * ¹¦ÄÜ: TODO Ìí¼Ó¹¦ÄÜÃèÊö. <br/>
- * ÈÕÆÚ: 2015-9-1 ÏÂÎç9:38:19 <br/>
+ * ï¿½ï¿½ï¿½ï¿½: MainPagerAdapter <br/>
+ * ï¿½ï¿½ï¿½ï¿½: TODO ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. <br/>
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1 ï¿½ï¿½ï¿½ï¿½9:38:19 <br/>
  *
  * @author   leixun
  * @version  	 
@@ -31,11 +34,13 @@ public class MainPagerAdapter extends FragmentPagerAdapter{
 
 	private ArrayList<String> fragmentNameList;
 	private ArrayList<Fragment> fragmentList;
+	private ArrayList<NavBean> urlsList;
 	
-	public MainPagerAdapter(FragmentManager fm,ArrayList<String> fragmentNameList) {
+	public MainPagerAdapter(FragmentManager fm,ArrayList<String> fragmentNameList,ArrayList<NavBean> urlList) {
 		super(fm);
 		this.fragmentNameList = fragmentNameList;
 		fragmentList = new ArrayList<Fragment>();
+		this.urlsList = urlList;
 	}
 
 	@Override
@@ -44,15 +49,17 @@ public class MainPagerAdapter extends FragmentPagerAdapter{
 			if (fragmentList.size() > position && fragmentList.get(position)!=null){
 				return fragmentList.get(position);
 			}
-			String className = fragmentNameList.get(position);
-			Class clazz;
-			try{
-				clazz = Class.forName(className);
-				Constructor constructor = clazz.getConstructor();
-				Fragment fragment = (Fragment)constructor.newInstance();
-				fragmentList.add(position,fragment);
-			}catch(Exception e){
-				e.printStackTrace();
+			for(int i = 0 ; i < getCount() ; i++){
+				String className = fragmentNameList.get(i);
+				Class clazz;
+				try{
+					clazz = Class.forName(className);
+					Constructor constructor = clazz.getConstructor(String.class);
+					Fragment fragment = (Fragment)constructor.newInstance(URLs.HOST+urlsList.get(i).getMenuUrl());
+					fragmentList.add(i,fragment);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 		return fragmentList!=null ? fragmentList.get(position):null;

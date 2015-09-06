@@ -12,7 +12,8 @@
 
 package com.sepcialfocus.android;
 
-import com.sepcialfocus.android.config.Logger;
+
+import com.mike.aframe.MKLog;
 
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -57,7 +58,7 @@ public abstract class BaseFragment extends Fragment{
 				mLoadingLayout.setVisibility(View.GONE);
 			}
 		} else {
-			Logger.d(BaseFragment.class.getSimpleName(), "mLoadingLayout is null");
+			MKLog.d(BaseFragment.class.getSimpleName(), "mLoadingLayout is null");
 		}
 	}
 	
@@ -69,7 +70,7 @@ public abstract class BaseFragment extends Fragment{
 				mNoNetLayout.setVisibility(View.GONE);
 			}
 		} else {
-			Logger.d(BaseFragment.class.getSimpleName(), "mNoNetLayout is null");
+			MKLog.d(BaseFragment.class.getSimpleName(), "mNoNetLayout is null");
 		}
 	}
 
