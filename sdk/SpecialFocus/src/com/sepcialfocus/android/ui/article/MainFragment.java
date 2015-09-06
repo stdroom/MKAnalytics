@@ -43,7 +43,10 @@ import android.widget.RelativeLayout;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.mike.aframe.MKLog;
+import com.mike.aframe.database.KJDB;
 import com.mike.aframe.utils.DensityUtils;
+import com.mike.aframe.utils.MD5Utils;
+import com.sepcialfocus.android.BaseApplication;
 import com.sepcialfocus.android.BaseFragment;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
@@ -66,7 +69,6 @@ import com.sepcialfocus.android.ui.widget.PullToRefreshView;
 public class MainFragment extends BaseFragment{
 	
 	private ArrayList<RollImageBean> images;
-	private ArrayList<Integer> images2;
 	int gallerypisition = 0;
 	Timer autoGallery = new Timer();
 	private GuideGallery mGallery;
@@ -87,18 +89,36 @@ public class MainFragment extends BaseFragment{
 	private Activity mActivity;
 	private String urls = "";
 	
+	boolean isPullRrefreshFlag;
+	String nextUrl;
+	private KJDB kjDb = null;
+	
 	public MainFragment(){
 	}
 	
-	public MainFragment(String Urls){
-		this.urls = Urls;
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.mActivity = getActivity();
-		mArticleList = new ArrayList<ArticleItemBean>();
+		kjDb = KJDB.create(mActivity);
+		Bundle args = getArguments();
+        if (null !=  args) {
+            if (args.containsKey("key")) {
+                this.urls = args.getString("key");
+            }
+        }
+        try{
+        	mArticleList = (ArrayList<ArticleItemBean>)
+        			BaseApplication.globalContext.readObject(MD5Utils.md5(urls));
+        	images = (ArrayList<RollImageBean>)BaseApplication.globalContext.readObject("rollImgs");
+        	if(mArticleList==null){
+        		mArticleList = new ArrayList<ArticleItemBean>();
+            }
+        }catch(Exception e){
+        	e.printStackTrace();
+        	mArticleList = new ArrayList<ArticleItemBean>();
+        }
 	}
 	
 	@Override
@@ -123,21 +143,28 @@ public class MainFragment extends BaseFragment{
 		});
 		mArticle_pullview = (PullToRefreshView)mView.findViewById(R.id.article_pullview);
 	}
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		if(mView == null){
-			mView = LayoutInflater.from(mActivity).inflate(R.layout.fragment_main, null);
-			mHeadView = LayoutInflater.from(mActivity).inflate(R.layout.layout_roll_img,null);
-			initView();
-			mArticleAdapter = new ArticleListAdapter(mActivity, mArticleList);
-			mArticle_listview.setAdapter(mArticleAdapter);
-			new Loadhtml(urls).execute("","","");
-		}
+		mView = LayoutInflater.from(mActivity).inflate(R.layout.fragment_main, null);
+		mHeadView = LayoutInflater.from(mActivity).inflate(R.layout.layout_roll_img,null);
+		initView();
+		mArticleAdapter = new ArticleListAdapter(mActivity, mArticleList);
+		mArticle_listview.setAdapter(mArticleAdapter);
+		initData();
 		return mView;
 	}
 	
+	private void initData(){
+		if(null==mArticleList || mArticleList.size()==0){
+			new Loadhtml(urls).execute("","","");
+		}
+		if(images!=null){
+			getRollImages(images);
+		}
+	}
 	
 
 
@@ -208,18 +235,9 @@ public class MainFragment extends BaseFragment{
                 	 }
                  }
                  getRollImages(rollList);
-//                 Elements nextdivs = content.getElementsByClass("paging");
-//                 Document nextdivcontions = Jsoup.parse(nextdivs.toString());
-//                 Elements nextelement = nextdivcontions.getElementsByTag("a");
-//                 isPullRrefreshFlag = false;
-//                 for(Element element:nextelement){
-//                	 if("下一页".equals(element.text())){
-//                		 isPullRrefreshFlag = true;
-//                		 nextUrl = hosts + element.attr("href").trim();
-//                		 break;
-//                	 }
-//                	 Log.d("element",element.toString());
-//                 }
+                 Element nextPage = content.getElementById("pages");
+                 Elements nextelement = nextPage.getElementsByTag("a");
+                 isPullRrefreshFlag = false;
                  
                  Log.d("element", article.toString());
                  Elements elements = article.children();
@@ -287,7 +305,11 @@ public class MainFragment extends BaseFragment{
                 	 bean.setSummary(summary);
                 	 bean.setUrl(link);
                 	 bean.setTags(tags);
-            		 mArticleList.add(bean);
+                	 bean.setMd5(MD5Utils.md5(link));
+                	 ArticleItemBean selectBean = kjDb.findById(bean.getMd5(), ArticleItemBean.class);
+                	 if(selectBean==null){
+                		 mArticleList.add(bean);
+                	 }
                  }
                 
             } catch (IOException e) {
@@ -436,6 +458,15 @@ public class MainFragment extends BaseFragment{
         };
         timeThread.start();
 	}
+
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		BaseApplication.globalContext.saveObject(mArticleList, MD5Utils.md5(urls));
+		BaseApplication.globalContext.saveObject(images, "rollImgs");
+	}
+	
 	
 }
 

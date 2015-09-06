@@ -14,6 +14,7 @@ package com.sepcialfocus.android.ui.article;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,11 +35,16 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.mike.aframe.database.KJDB;
+import com.mike.aframe.utils.MD5Utils;
+import com.sepcialfocus.android.BaseApplication;
 import com.sepcialfocus.android.BaseFragment;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
+import com.sepcialfocus.android.config.URLs;
 import com.sepcialfocus.android.ui.adapter.ArticleListAdapter;
 import com.sepcialfocus.android.ui.widget.PullToRefreshView;
+import com.sepcialfocus.android.ui.widget.PullToRefreshView.OnFooterRefreshListener;
 
 /**
  * 类名: ArticleFragment <br/>
@@ -57,18 +63,35 @@ public class ArticleFragment extends BaseFragment{
 	private Context mContext;
 	private String urls = "";
 	
+	boolean isPullRrefreshFlag;
+	String nextUrl;
+	private KJDB kjDb = null;
+	
 	public ArticleFragment(){
 	}
 	
-	public ArticleFragment(String urls){
-		this.urls = urls;
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.mContext = getActivity();
-		mArticleList = new ArrayList<ArticleItemBean>();
+		kjDb = KJDB.create(mContext);
+		Bundle args = getArguments();
+        if (null !=  args) {
+            if (args.containsKey("key")) {
+                this.urls = args.getString("key");
+            }
+        }
+        try{
+        	mArticleList = (ArrayList<ArticleItemBean>)
+        			BaseApplication.globalContext.readObject(MD5Utils.md5(urls));
+        	if(mArticleList==null){
+        		mArticleList = new ArrayList<ArticleItemBean>();
+            }
+        }catch(Exception e){
+        	e.printStackTrace();
+        	mArticleList = new ArrayList<ArticleItemBean>();
+        }
+        
 	}
 	
 	@Override
@@ -85,19 +108,33 @@ public class ArticleFragment extends BaseFragment{
 			}
 		});
 		mArticle_pullview = (PullToRefreshView)mView.findViewById(R.id.article_pullview);
+		mArticle_pullview.setOnFooterRefreshListener(new OnFooterRefreshListener() {
+			@Override
+			public void onFooterRefresh(PullToRefreshView view) {
+				if(isPullRrefreshFlag){
+					new Loadhtml(nextUrl).execute("","","");
+				} else {
+					mArticle_pullview.onFooterRefreshComplete();
+				}
+			}
+		});
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		if(mView==null){
-			mView = LayoutInflater.from(mContext).inflate(R.layout.fragment_article, null);
-			initView();
-			mArticleAdapter = new ArticleListAdapter(mContext, mArticleList);
-			mArticle_listview.setAdapter(mArticleAdapter);
+		mView = LayoutInflater.from(mContext).inflate(R.layout.fragment_article, null);
+		initView();
+		mArticleAdapter = new ArticleListAdapter(mContext, mArticleList);
+		mArticle_listview.setAdapter(mArticleAdapter);
+		initData();
+		return mView;
+	}
+	
+	private void initData(){
+		if(null==mArticleList || mArticleList.size()==0){
 			new Loadhtml(urls).execute("","","");
 		}
-		return mView;
 	}
 
 
@@ -118,21 +155,21 @@ public class ArticleFragment extends BaseFragment{
             	doc = Jsoup.connect(urls).timeout(5000).get();
                  Document content = Jsoup.parse(doc.toString());
                  Element article = content.getElementById("article");
-//                 Elements nextdivs = content.getElementsByClass("paging");
-//                 Document nextdivcontions = Jsoup.parse(nextdivs.toString());
-//                 Elements nextelement = nextdivcontions.getElementsByTag("a");
-//                 isPullRrefreshFlag = false;
-//                 for(Element element:nextelement){
-//                	 if("下一页".equals(element.text())){
-//                		 isPullRrefreshFlag = true;
-//                		 nextUrl = hosts + element.attr("href").trim();
-//                		 break;
-//                	 }
-//                	 Log.d("element",element.toString());
-//                 }
+                 Element nextPage = content.getElementById("pages");
+                 Elements nextelement = nextPage.getElementsByTag("a");
+                 isPullRrefreshFlag = false;
+                 for(Element element:nextelement){
+                	 if("下一页".equals(element.text())){
+                		 isPullRrefreshFlag = true;
+                		 nextUrl = ArticleFragment.this.urls + element.attr("href").trim();
+                		 break;
+                	 }
+                	 Log.d("element",element.toString());
+                 }
                  
                  Log.d("element", article.toString());
                  Elements elements = article.children();
+                 ArrayList<ArticleItemBean> tempList = new ArrayList<ArticleItemBean>();
                  for(Element linkss : elements)
                  {	 
                 	 if(!linkss.hasAttr("class") || !"post".equals(linkss.attr("class"))){
@@ -197,8 +234,13 @@ public class ArticleFragment extends BaseFragment{
                 	 bean.setSummary(summary);
                 	 bean.setUrl(link);
                 	 bean.setTags(tags);
-            		 mArticleList.add(bean);
+                	 bean.setMd5(MD5Utils.md5(link));
+                	 ArticleItemBean selectBean = kjDb.findById(bean.getMd5(), ArticleItemBean.class);
+                	 if(selectBean==null){
+                		 mArticleList.add(bean);
+                	 }
                  }
+                 
                 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -231,6 +273,14 @@ public class ArticleFragment extends BaseFragment{
         
     }
 
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		BaseApplication.globalContext.saveObject(mArticleList, MD5Utils.md5(urls));
+	}
+
+	
 
 }
 

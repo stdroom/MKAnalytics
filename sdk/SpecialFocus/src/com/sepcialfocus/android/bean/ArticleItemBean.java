@@ -15,6 +15,8 @@ package com.sepcialfocus.android.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.mike.aframe.database.annotate.Id;
+
 /**
  * 类名: ArticleItemBean <br/>
  * 功能: TODO 添加功能描述. <br/>
@@ -24,6 +26,9 @@ import java.util.ArrayList;
  * @version  	 
  */
 public class ArticleItemBean implements Serializable{
+	
+	@Id
+	private String md5 = "";
 	String title = "";
 	String date = "";
 	String imgUrl = "";
@@ -31,6 +36,21 @@ public class ArticleItemBean implements Serializable{
 	String tagUrl = "";
 	ArrayList<String> tags = null;
 	String summary = "";
+	
+	/** 该条目类型  
+	 * 1：正常文章
+	 * */
+	int category = 1;
+	
+	boolean hasReadFlag = false;
+	
+	
+	public String getMd5() {
+		return md5;
+	}
+	public void setMd5(String md5) {
+		this.md5 = md5;
+	}
 	public String getTitle() {
 		return title;
 	}
@@ -73,5 +93,18 @@ public class ArticleItemBean implements Serializable{
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
+	public boolean isHasReadFlag() {
+		return hasReadFlag;
+	}
+	public void setHasReadFlag(boolean hasReadFlag) {
+		this.hasReadFlag = hasReadFlag;
+	}
+	public int getCategory() {
+		return category;
+	}
+	public void setCategory(int category) {
+		this.category = category;
+	}
+	
 }
 

@@ -11,6 +11,9 @@
 */
 
 package com.sepcialfocus.android.bean;
+
+import java.io.Serializable;
+
 /**
  * 类名: RollImageBean <br/>
  * 功能: TODO 添加功能描述. <br/>
@@ -19,7 +22,7 @@ package com.sepcialfocus.android.bean;
  * @author   leixun
  * @version  	 
  */
-public class RollImageBean {
+public class RollImageBean implements Serializable{
 	private String id = "";
 	private String title="";
 	private String imgUrl = "";

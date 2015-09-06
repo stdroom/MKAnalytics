@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import com.sepcialfocus.android.bean.NavBean;
 import com.sepcialfocus.android.config.URLs;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -54,8 +55,11 @@ public class MainPagerAdapter extends FragmentPagerAdapter{
 				Class clazz;
 				try{
 					clazz = Class.forName(className);
-					Constructor constructor = clazz.getConstructor(String.class);
-					Fragment fragment = (Fragment)constructor.newInstance(URLs.HOST+urlsList.get(i).getMenuUrl());
+					Constructor constructor = clazz.getConstructor();
+					Fragment fragment = (Fragment)constructor.newInstance();
+					Bundle bundle = new Bundle();
+					bundle.putString("key", URLs.HOST+urlsList.get(i).getMenuUrl());
+					fragment.setArguments(bundle);
 					fragmentList.add(i,fragment);
 				}catch(Exception e){
 					e.printStackTrace();

@@ -37,7 +37,7 @@ import com.sepcialfocus.android.ui.article.MainFragment;
 
 /**
  * ����: MainActivity <br/>
- * ����: ��ҳ��. <br/>
+ * ����: 程序入口. <br/>
  * ����: 2015-9-1 ����9:40:41 <br/>
  *
  * @author   leixun
