@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sepcialfocus.android.ui.article.ArticleDetailActivity"/>
+            android:name="com.sepcialfocus.android.ui.article.ArticleDetailActivity"
+            android:hardwareAccelerated="false"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

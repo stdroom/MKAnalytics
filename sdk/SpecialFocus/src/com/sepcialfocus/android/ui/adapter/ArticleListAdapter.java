@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.mike.aframe.bitmap.KJBitmap;
+import com.mike.aframe.bitmap.KJBitmapConfig;
+import com.mike.aframe.bitmap.utils.BitmapCreate;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
@@ -87,6 +89,7 @@ public class ArticleListAdapter extends BaseAdapter{
 		holder.mArticleTagOneTv.setVisibility(View.GONE);
 		holder.mArticleTagTwoTv.setVisibility(View.GONE);
 		holder.mArticleTagThrTv.setVisibility(View.GONE);
+		holder.mArticleImg.setImageDrawable(this.mContext.getResources().getDrawable(R.drawable.ic_launcher));
 		if(tags!=null && tags.size()>0){
 			int length = tags.size();
 			if(length > 3){

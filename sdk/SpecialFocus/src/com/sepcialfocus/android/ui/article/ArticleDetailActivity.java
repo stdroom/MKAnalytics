@@ -30,9 +30,11 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.mike.aframe.utils.Regexp;
 import com.sepcialfocus.android.BaseFragmentActivity;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
+import com.sepcialfocus.android.config.AppConstant;
 import com.sepcialfocus.android.config.URLs;
 
 /**
@@ -72,6 +74,7 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
 		mArticlePostmetaTv = (TextView)findViewById(R.id.article_postmeta);
 		mArticleContentTv = (TextView)findViewById(R.id.article_content);
 		mWebView = (WebView)findViewById(R.id.article_web);
+		mWebView.setBackgroundColor(0);
 	}
 
 	class Loadhtml extends AsyncTask<String, String, String>
@@ -91,14 +94,8 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
                 CharSequence charSequence = null;
             	doc = Jsoup.connect(urls).timeout(5000).get();
                  Document content = Jsoup.parse(doc.toString());
-                 content.getElementById("hr336").remove();
-                 Element article = content.getElementById("text");
-                 if(!content.select("p>img").attr("src").contains("http://")){
-                	 String urlLast = content.select("p>img").attr("src");
-                	 content.select("p>img").removeAttr("src");
-                	 content.select("p>img").attr("src",URLs.HOST+urlLast);
-                 }
-                 mArticleContentStr = article.toString();
+                 mArticleContentStr = parseArticleContent(content);
+                 mArticlePostmetaStr = parsePostMeta(content);
                  return mArticleContentStr;
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -113,7 +110,10 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
             super.onPostExecute(result);
 //            Log.d("doc", doc.toString().trim());
             mArticleContentTv.setText(result);
+            mArticlePostmetaTv.setText(Html.fromHtml(mArticlePostmetaStr));
             mWebView.getSettings().setJavaScriptEnabled(false);  
+            mWebView.getSettings().setLoadWithOverviewMode(true);
+            mWebView.setBackgroundColor(0);
             mWebView.loadData(mArticleContentStr, "text/html; charset=UTF-8", "utf-8");
         }
 
@@ -124,5 +124,53 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
         }
         
     }
+	
+	private String parsePostMeta(Document content){
+		Element article = content.getElementById("text");
+		Elements articles = content.getElementsByClass("postmeta");
+		articles.select("script").remove();
+        if(article!=null){
+	        return articles.toString();
+        }else{
+        	Elements contents = content.getElementsByClass("info");
+        	contents.select("script").remove();
+        	return contents.toString();
+        }
+	}
+	
+	/*
+	 * 解析内容
+	 */
+	private String parseArticleContent(Document content){
+		//　去掉广告
+		content.getElementById("hr336").remove();
+		// 批量处理img标签 链接地址、宽高设置
+		Elements pngs = content.select("img[src]");  
+        for (Element element : pngs) {  
+            String imgUrl = element.attr("src");
+            String imgWidth = element.attr("style").trim();
+            int width = Regexp.getStringWidth(imgWidth);
+            int height = Regexp.getStringHeight(imgWidth);
+            if(width > AppConstant.WEBVIEW_WIDTH && height > 0){
+            	height = height*AppConstant.WEBVIEW_WIDTH/width;
+            	width = AppConstant.WEBVIEW_WIDTH;
+            }
+            if(width>0 && height>0){
+            	element.attr("style", "width:"+width+"px; height:"+height+"px;");
+            }
+            if (imgUrl.trim().startsWith("/")) {  
+                imgUrl =URLs.HOST + imgUrl;  
+                element.attr("src", imgUrl);
+            }  
+        }  
+        
+        Element article = content.getElementById("text");
+        if(article!=null){
+	        return article.toString();
+        }else{
+        	Elements contents = content.getElementsByClass("content");
+        	return contents.toString();
+        }
+	}
 }
 
