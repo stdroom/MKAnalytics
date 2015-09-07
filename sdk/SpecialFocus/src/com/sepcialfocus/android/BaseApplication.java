@@ -22,7 +22,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.sepcialfocus.android.config.AppConfig;
+import com.sepcialfocus.android.configs.AppConfig;
 
 import android.app.Application;
 

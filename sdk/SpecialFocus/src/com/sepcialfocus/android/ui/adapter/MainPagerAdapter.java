@@ -16,7 +16,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 import com.sepcialfocus.android.bean.NavBean;
-import com.sepcialfocus.android.config.URLs;
+import com.sepcialfocus.android.configs.URLs;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

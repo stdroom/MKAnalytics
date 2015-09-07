@@ -21,7 +21,7 @@ import com.mike.aframe.bitmap.utils.BitmapCreate;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
-import com.sepcialfocus.android.config.URLs;
+import com.sepcialfocus.android.configs.URLs;
 
 import android.content.Context;
 import android.view.LayoutInflater;

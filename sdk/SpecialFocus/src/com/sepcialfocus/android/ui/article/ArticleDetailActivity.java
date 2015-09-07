@@ -34,8 +34,8 @@ import com.mike.aframe.utils.Regexp;
 import com.sepcialfocus.android.BaseFragmentActivity;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
-import com.sepcialfocus.android.config.AppConstant;
-import com.sepcialfocus.android.config.URLs;
+import com.sepcialfocus.android.configs.AppConstant;
+import com.sepcialfocus.android.configs.URLs;
 
 /**
  * 类名: ArticleDetailActivity <br/>

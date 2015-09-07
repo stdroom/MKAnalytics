@@ -14,7 +14,7 @@ import com.mike.aframe.MKLog;
 import com.mike.aframe.bitmap.KJBitmap;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.RollImageBean;
-import com.sepcialfocus.android.config.URLs;
+import com.sepcialfocus.android.configs.URLs;
 import com.sepcialfocus.android.ui.article.MainFragment;
 
 public class ImageAdapter extends BaseAdapter{  
