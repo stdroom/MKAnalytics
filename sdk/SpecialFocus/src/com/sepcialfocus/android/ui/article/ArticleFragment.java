@@ -14,7 +14,6 @@ package com.sepcialfocus.android.ui.article;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,8 +41,8 @@ import com.sepcialfocus.android.BaseApplication;
 import com.sepcialfocus.android.BaseFragment;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
+import com.sepcialfocus.android.bean.NavBean;
 import com.sepcialfocus.android.configs.AppConstant;
-import com.sepcialfocus.android.configs.URLs;
 import com.sepcialfocus.android.ui.adapter.ArticleListAdapter;
 import com.sepcialfocus.android.ui.widget.PullToRefreshView;
 import com.sepcialfocus.android.ui.widget.PullToRefreshView.OnFooterRefreshListener;
@@ -83,21 +82,7 @@ public class ArticleFragment extends BaseFragment{
                 this.urls = args.getString("key");
             }
         }
-        try{
-        	mArticleList = (ArrayList<ArticleItemBean>)
-        			BaseApplication.globalContext.readObject(MD5Utils.md5(urls));
-        	nextUrl = PreferenceHelper.readString(mContext, 
-        			AppConstant.URL_NEXT_PAGE_FILE, MD5Utils.md5(urls));
-        	if(nextUrl!=null && !"".equals(nextUrl)){
-        		isPullRrefreshFlag = true;
-        	}
-        	if(mArticleList==null){
-        		mArticleList = new ArrayList<ArticleItemBean>();
-            }
-        }catch(Exception e){
-        	e.printStackTrace();
-        	mArticleList = new ArrayList<ArticleItemBean>();
-        }
+        readNativeData();
         
 	}
 	
@@ -136,6 +121,18 @@ public class ArticleFragment extends BaseFragment{
 		mArticle_listview.setAdapter(mArticleAdapter);
 		initData();
 		return mView;
+	}
+	
+	public void notifyData(NavBean bean){
+		if(bean!=null){
+			this.urls = bean.getMenuUrl();
+			readNativeData();
+			if(mArticle_listview== null){
+				return;
+			}
+			mArticleAdapter = new ArticleListAdapter(mContext, mArticleList);
+			mArticle_listview.setAdapter(mArticleAdapter);
+		}
 	}
 	
 	private void initData(){
@@ -291,7 +288,23 @@ public class ArticleFragment extends BaseFragment{
     			AppConstant.URL_NEXT_PAGE_FILE, MD5Utils.md5(urls),nextUrl);
 	}
 
-	
+	private void readNativeData(){
+		try{
+        	mArticleList = (ArrayList<ArticleItemBean>)
+        			BaseApplication.globalContext.readObject(MD5Utils.md5(urls));
+        	nextUrl = PreferenceHelper.readString(mContext, 
+        			AppConstant.URL_NEXT_PAGE_FILE, MD5Utils.md5(urls));
+        	if(nextUrl!=null && !"".equals(nextUrl)){
+        		isPullRrefreshFlag = true;
+        	}
+        	if(mArticleList==null){
+        		mArticleList = new ArrayList<ArticleItemBean>();
+            }
+        }catch(Exception e){
+        	e.printStackTrace();
+        	mArticleList = new ArrayList<ArticleItemBean>();
+        }
+	}
 
 }
 
