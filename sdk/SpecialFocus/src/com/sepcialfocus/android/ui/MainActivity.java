@@ -114,13 +114,19 @@ public class MainActivity extends BaseFragmentActivity
 		mFragmentList.clear();
 		int length = mUrlsList.size();
 		for(int i = 1 ; i <= length ; i++){
+			Bundle bundle = new Bundle();
+			bundle.putString("key", URLs.HOST+mUrlsList.get(i-1).getMenuUrl());
 			if(i == 1){
-				mFragmentList.add(new MainFragment(URLs.HOST+mUrlsList.get(0).getMenuUrl()));
+				Fragment fragment = new MainFragment();
+				fragment.setArguments(bundle);
+				mFragmentList.add(fragment);
 			}else{
-				mFragmentList.add(new ArticleFragment(URLs.HOST+mUrlsList.get(i-1).getMenuUrl()));
+				Fragment fragment = new ArticleFragment();
+				fragment.setArguments(bundle);
+				mFragmentList.add(fragment);
 			}
 		}
-		mFragmentPagerAdapter.appendList(mFragmentList);
+		mFragmentPagerAdapter.setFragments(mFragmentList);
 	}
 
 	@Override

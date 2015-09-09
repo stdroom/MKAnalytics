@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,9 +69,6 @@ public class ArticleFragment extends BaseFragment{
 	
 	public ArticleFragment(){
 	}
-	public ArticleFragment(String urls){
-		this.urls = urls;
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,7 +113,7 @@ public class ArticleFragment extends BaseFragment{
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
-			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+			ViewGroup container,  Bundle savedInstanceState) {
 		mView = LayoutInflater.from(mContext).inflate(R.layout.fragment_article, null);
 		initView();
 		mArticleAdapter = new ArticleListAdapter(mContext, mArticleList);
