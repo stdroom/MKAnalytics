@@ -44,7 +44,7 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/setting_nav_img"
             android:scaleType="center"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
     </RelativeLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/fragment_viewpager"

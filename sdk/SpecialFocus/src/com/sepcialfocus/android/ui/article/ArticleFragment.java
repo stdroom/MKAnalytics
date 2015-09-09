@@ -70,6 +70,9 @@ public class ArticleFragment extends BaseFragment{
 	
 	public ArticleFragment(){
 	}
+	public ArticleFragment(String urls){
+		this.urls = urls;
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

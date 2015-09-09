@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import net.youmi.android.spot.SpotManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
@@ -35,6 +36,8 @@ import com.sepcialfocus.android.BaseFragmentActivity;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.NavBean;
 import com.sepcialfocus.android.configs.AppConstant;
+import com.sepcialfocus.android.configs.URLs;
+import com.sepcialfocus.android.ui.adapter.ArticleFragmentPagerAdapter;
 import com.sepcialfocus.android.ui.adapter.MainPagerAdapter;
 import com.sepcialfocus.android.ui.article.ArticleFragment;
 import com.sepcialfocus.android.ui.article.MainFragment;
@@ -62,10 +65,10 @@ public class MainActivity extends BaseFragmentActivity
 	private int currentFragmentIndex;
 	private boolean isEnd;
 	
-	private ArrayList<String> mFragmentList = null;
 	private ArrayList<NavBean> mUrlsList = null;
 	private ViewPager mFragmentViewPager = null;
-	private MainPagerAdapter mFragmentPagerAdapter = null;
+	private ArticleFragmentPagerAdapter mFragmentPagerAdapter = null;
+	private ArrayList<Fragment> mFragmentList;
 	
 	private ImageView mDragSoftImg;
 	
@@ -80,6 +83,7 @@ public class MainActivity extends BaseFragmentActivity
 		// 设置插屏动画的横竖屏展示方式，如果设置了横屏，则在有广告资源的情况下会是优先使用横屏图。
 		SpotManager.getInstance(this).setSpotOrientation(
 				SpotManager.ORIENTATION_PORTRAIT);
+		mFragmentList = new ArrayList<Fragment>();
 		initMenu();
 		initView();
 	}
@@ -98,23 +102,25 @@ public class MainActivity extends BaseFragmentActivity
 			}
 		});
 		mFragmentViewPager = (ViewPager)findViewById(R.id.fragment_viewpager);
+		mFragmentPagerAdapter = new ArticleFragmentPagerAdapter(
+				getSupportFragmentManager());
+		mFragmentViewPager.setOffscreenPageLimit(1);
+		mFragmentViewPager.setAdapter(mFragmentPagerAdapter);
+		mFragmentViewPager.setOnPageChangeListener(this);
 		initFragment();
 	}
 	
 	private void initFragment(){
-		initMenu();
-		mFragmentList = new ArrayList<String>();
+		mFragmentList.clear();
 		int length = mUrlsList.size();
 		for(int i = 1 ; i <= length ; i++){
 			if(i == 1){
-				mFragmentList.add(MainFragment.class.getName());
+				mFragmentList.add(new MainFragment(URLs.HOST+mUrlsList.get(0).getMenuUrl()));
 			}else{
-				mFragmentList.add(ArticleFragment.class.getName());
+				mFragmentList.add(new ArticleFragment(URLs.HOST+mUrlsList.get(i-1).getMenuUrl()));
 			}
 		}
-		mFragmentPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), mFragmentList,mUrlsList);
-		mFragmentViewPager.setAdapter(mFragmentPagerAdapter);
-		mFragmentViewPager.setOnPageChangeListener(this);
+		mFragmentPagerAdapter.appendList(mFragmentList);
 	}
 
 	@Override
@@ -237,12 +243,7 @@ public class MainActivity extends BaseFragmentActivity
 		super.onActivityResult(requestCode,resultCode,data);
 		if(requestCode == AppConstant.JUMP_CODE){
 			initMenu();
-			int length = mFragmentPagerAdapter.getCount();
-			for(int i = 1 ; i < length ; i++){
-				if(mFragmentPagerAdapter.getItem(i) instanceof ArticleFragment){
-					((ArticleFragment)mFragmentPagerAdapter.getItem(i)).notifyData(mUrlsList.get(i));
-				}
-			}
+			initFragment();
 		}
 	}
 	

@@ -95,6 +95,9 @@ public class MainFragment extends BaseFragment{
 	
 	public MainFragment(){
 	}
+	public MainFragment(String urls){
+		this.urls = urls;
+	}
 	
 
 	@Override
