@@ -1,9 +1,9 @@
 /**
- * ¹¤³ÌÃû: SpecialFocus
- * ÎÄ¼şÃû: BaseFragmentActivity.java
- * °üÃû: com.sepcialfocus.android.ui
- * ÈÕÆÚ: 2015-9-1ÏÂÎç9:39:16
- * Copyright (c) 2015, ±±¾©Ğ¡Âí¹ıºÓ½ÌÓı¿Æ¼¼ÓĞÏŞ¹«Ë¾ All Rights Reserved.
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: SpecialFocus
+ * ï¿½Ä¼ï¿½ï¿½ï¿½: BaseFragmentActivity.java
+ * ï¿½ï¿½ï¿½ï¿½: com.sepcialfocus.android.ui
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1ï¿½ï¿½ï¿½ï¿½9:39:16
+ * Copyright (c) 2015, ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Ş¹ï¿½Ë¾ All Rights Reserved.
  * http://www.xiaoma.com/
  * Mail: leixun@xiaoma.cn
  * QQ: 378640336
@@ -12,18 +12,69 @@
 
 package com.sepcialfocus.android;
 
+import com.mike.aframe.MKLog;
+
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 /**
- * ÀàÃû: BaseFragmentActivity <br/>
- * ¹¦ÄÜ: TODO Ìí¼Ó¹¦ÄÜÃèÊö. <br/>
- * ÈÕÆÚ: 2015-9-1 ÏÂÎç9:39:16 <br/>
+ * ï¿½ï¿½ï¿½ï¿½: BaseFragmentActivity <br/>
+ * ï¿½ï¿½ï¿½ï¿½: TODO ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. <br/>
+ * ï¿½ï¿½ï¿½ï¿½: 2015-9-1 ï¿½ï¿½ï¿½ï¿½9:39:16 <br/>
  *
  * @author   leixun
  * @version  	 
  */
 public class BaseFragmentActivity extends FragmentActivity{
+	protected RelativeLayout mLoadingLayout;
+	protected RelativeLayout mNoNetLayout;
 	
+	/**
+	 * 
+	 * initView:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„åŠŸèƒ½). <br/>
+	 *
+	 * @author leixun
+	 * 2015å¹´9æœˆ2æ—¥ä¸‹åˆ5:36:02
+	 * @since 1.0
+	 */
+	protected void initView(){
+		mLoadingLayout = (RelativeLayout)findViewById(R.id.layout_loading_bar);
+	}
+	
+	/**
+	 * 
+	 * setLoadingVisible:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„åŠŸèƒ½). <br/>
+	 *
+	 * @author leixun
+	 * 2015å¹´9æœˆ2æ—¥ä¸‹åˆ5:25:05
+	 * @param isVisible
+	 * @since 1.0
+	 */
+	protected void setLoadingVisible(boolean isVisible){
+		if(mLoadingLayout!=null){
+			if(isVisible){
+				mLoadingLayout.setVisibility(View.VISIBLE);
+			}else{
+				mLoadingLayout.setVisibility(View.GONE);
+			}
+		} else {
+			MKLog.d(BaseFragment.class.getSimpleName(), "mLoadingLayout is null");
+		}
+	}
+	
+	protected void setNoNetVisible(boolean isVisible){
+		if(mLoadingLayout!=null){
+			if(isVisible){
+				mNoNetLayout.setVisibility(View.VISIBLE);
+			}else{
+				mNoNetLayout.setVisibility(View.GONE);
+			}
+		} else {
+			MKLog.d(BaseFragment.class.getSimpleName(), "mNoNetLayout is null");
+		}
+	}
+
 
 }
 

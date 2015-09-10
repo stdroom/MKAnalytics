@@ -88,7 +88,7 @@ public class MainActivity extends BaseFragmentActivity
 		initView();
 	}
 	
-	private void initView(){
+	protected void initView(){
 		mDragSoftImg = (ImageView)findViewById(R.id.drag_soft_img);
 		mDragSoftImg.setOnClickListener(new View.OnClickListener() {
 			

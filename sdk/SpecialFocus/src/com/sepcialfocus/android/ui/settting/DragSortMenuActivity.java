@@ -87,7 +87,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
 		initView();
 	}
 	
-	private void initView(){
+	protected void initView(){
 		userGridView = (DragGrid) findViewById(R.id.userGridView);
         otherGridView = (OtherGridView) findViewById(R.id.otherGridView);
         

@@ -13,21 +13,19 @@
 package com.sepcialfocus.android.ui.article;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mike.aframe.utils.Regexp;
@@ -45,10 +43,10 @@ import com.sepcialfocus.android.configs.URLs;
  * @author   leixun
  * @version  	 
  */
-public class ArticleDetailActivity extends BaseFragmentActivity{
+public class ArticleDetailActivity extends BaseFragmentActivity
+	implements View.OnClickListener{
 	
 	
-	private View mView;
 	private String urls = "";
 	private ArticleItemBean mArticleBean;
 	private TextView mArticleTitleTv;
@@ -56,7 +54,8 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
 	private TextView mArticleContentTv;
 	private String mArticleContentStr = "";
 	private String mArticlePostmetaStr = "";
-
+	ImageView mBackImg;
+	private LinearLayout mContentLL;
 	private WebView mWebView;
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -66,10 +65,16 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
 		initView();
 		mArticleTitleTv.setText(mArticleBean.getTitle());
 		urls = URLs.HOST+mArticleBean.getUrl();
+		setLoadingVisible(true);
+		mContentLL.setVisibility(View.GONE);
 		new Loadhtml(urls).execute("","","");
 	}
 	
-	private void initView(){
+	protected void initView(){
+		super.initView();
+		mBackImg = (ImageView)findViewById(R.id.bottom_back);
+		mBackImg.setOnClickListener(this);
+		mContentLL = (LinearLayout)findViewById(R.id.content_ll);
 		mArticleTitleTv = (TextView)findViewById(R.id.article_title);
 		mArticlePostmetaTv = (TextView)findViewById(R.id.article_postmeta);
 		mArticleContentTv = (TextView)findViewById(R.id.article_content);
@@ -108,6 +113,8 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
         protected void onPostExecute(String result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
+            setLoadingVisible(false);
+            mContentLL.setVisibility(View.VISIBLE);
 //            Log.d("doc", doc.toString().trim());
             mArticleContentTv.setText(result);
             mArticlePostmetaTv.setText(Html.fromHtml(mArticlePostmetaStr));
@@ -172,5 +179,16 @@ public class ArticleDetailActivity extends BaseFragmentActivity{
         	return contents.toString();
         }
 	}
+
+	@Override
+	public void onClick(View arg0) {
+		
+		switch(arg0.getId()){
+		case R.id.bottom_back: 
+			finish();
+			break;
+		}
+	}
+	
 }
 
