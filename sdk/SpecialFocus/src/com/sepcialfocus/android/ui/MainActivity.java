@@ -13,6 +13,7 @@
 package com.sepcialfocus.android.ui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.youmi.android.spot.SpotManager;
 import android.content.Intent;
@@ -31,6 +32,8 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.mike.aframe.database.KJDB;
+import com.mike.aframe.utils.MD5Utils;
 import com.sepcialfocus.android.BaseApplication;
 import com.sepcialfocus.android.BaseFragmentActivity;
 import com.sepcialfocus.android.R;
@@ -72,6 +75,8 @@ public class MainActivity extends BaseFragmentActivity
 	
 	private ImageView mDragSoftImg;
 	
+	private KJDB mKJDb;
+	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -84,6 +89,7 @@ public class MainActivity extends BaseFragmentActivity
 		SpotManager.getInstance(this).setSpotOrientation(
 				SpotManager.ORIENTATION_PORTRAIT);
 		mFragmentList = new ArrayList<Fragment>();
+		mKJDb = KJDB.create(this);
 		initMenu();
 		initView();
 	}
@@ -190,18 +196,21 @@ public class MainActivity extends BaseFragmentActivity
 
 	@SuppressWarnings("unchecked")
 	private ArrayList<NavBean> getMenuList(){
+		List<NavBean> list2  = mKJDb.findAllByWhere(NavBean.class, "isShow = 1");
+		if(list2!=null && list2.size()>0){
+			return (ArrayList<NavBean>) list2;
+		}
 		ArrayList<NavBean> list = new ArrayList<NavBean>();
-		if(BaseApplication.globalContext.readObject(AppConstant.MENU_FILE)!=null){
-			list = (ArrayList<NavBean>)BaseApplication.globalContext.readObject(AppConstant.MENU_FILE);
-		}else{
-			String[] menuName = getResources().getStringArray(R.array.menu_str);
-			String[] menuUrl = getResources().getStringArray(R.array.menu_url);
-			for(int i = 0 ; i<menuName.length ; i++){
-				NavBean bean = new NavBean();
-				bean.setMenu(menuName[i]);
-				bean.setMenuUrl(menuUrl[i]);
-				list.add(bean);
-			}
+		String[] menuName = getResources().getStringArray(R.array.menu_str);
+		String[] menuUrl = getResources().getStringArray(R.array.menu_url);
+		for(int i = 0 ; i<menuName.length ; i++){
+			NavBean bean = new NavBean();
+			bean.setMd5(MD5Utils.md5(menuName[i]+menuUrl[i]));
+			bean.setMenu(menuName[i]);
+			bean.setMenuUrl(menuUrl[i]);
+			bean.setIsShow(1);
+			bean.setCategory(1);
+			list.add(bean);
 		}
 		return list;
 	}
@@ -235,7 +244,6 @@ public class MainActivity extends BaseFragmentActivity
 
 	@Override
 	public void finish() {
-		BaseApplication.globalContext.saveObject(mUrlsList, AppConstant.MENU_FILE);
 		super.finish();
 	}
 

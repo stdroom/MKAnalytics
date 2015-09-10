@@ -10,7 +10,7 @@
 package com.sepcialfocus.android.ui.settting;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,27 +20,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
-import android.view.animation.Animation.AnimationListener;
-import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
-import com.sepcialfocus.android.BaseApplication;
+import com.mike.aframe.database.KJDB;
+import com.mike.aframe.utils.MD5Utils;
 import com.sepcialfocus.android.BaseFragmentActivity;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.NavBean;
-import com.sepcialfocus.android.configs.AppConstant;
 import com.sepcialfocus.android.ui.adapter.DragAdapter;
 import com.sepcialfocus.android.ui.adapter.DragNavAdapter;
 import com.sepcialfocus.android.ui.adapter.OtherAdapter;
 import com.sepcialfocus.android.ui.widget.DragGridView;
-import com.sepcialfocus.android.ui.widget.DragGridView.OnChanageListener;
 import com.sepcialfocus.android.widgets.DragGrid;
 import com.sepcialfocus.android.widgets.OtherGridView;
 
@@ -75,15 +73,20 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
 	
 	TextView mTitleTv;
 	ImageView mBackImg;
+	KJDB mDb;
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.activity_dragmenusoft);
+		mDb = KJDB.create(this);
 		if(getIntent().getExtras()!=null 
 				&& getIntent().getExtras().getSerializable("key")!=null){
 			userChannelList = (ArrayList<NavBean>)getIntent().getSerializableExtra("key");
 		}
-		
+		List<NavBean> list = mDb.findAllByWhere(NavBean.class, "isShow = 0");
+		if(list!=null && list.size()>0){
+			otherChannelList = (ArrayList<NavBean>)list;
+		}
 		initView();
 	}
 	
@@ -136,6 +139,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                         otherAdapter.setVisible(false);
                         // 添加到最后一个
                         otherAdapter.addItem(channel);
+                        channel.setIsShow(0);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -148,9 +152,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                                     moveAnim(moveImageView, startLocation, endLocation, channel,
                                             userGridView);
                                     userAdapter.setRemove(position);
-//                                    ChannelManage.getManage(App.getApp().getSQLHelper())
-//                                            .updateChannel(
-//                                                    channel, "0");
+                                    mDb.update(channel,"md5 = "+MD5Utils.md5(channel.getMenu()+channel.getMenuUrl()));
                                 } catch (Exception localException) {
                                 }
                             }
@@ -166,6 +168,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                     newTextView.getLocationInWindow(startLocation);
                     final NavBean channel = ((OtherAdapter) parent.getAdapter())
                             .getItem(position);
+                    channel.setIsShow(1);
                     userAdapter.setVisible(false);
                     // 添加到最后一个
                     userAdapter.addItem(channel);
@@ -180,8 +183,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                                 moveAnim(moveImageView, startLocation, endLocation, channel,
                                         otherGridView);
                                 otherAdapter.setRemove(position);
-//                                ChannelManage.getManage(App.getApp().getSQLHelper()).updateChannel(
-//                                        channel, "1");
+                                mDb.update(channel,"md5 = "+MD5Utils.md5(channel.getMenu()+channel.getMenuUrl()));
                             } catch (Exception localException) {
                             }
                         }
