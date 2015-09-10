@@ -14,6 +14,8 @@ package com.sepcialfocus.android.bean;
 
 import java.io.Serializable;
 
+import com.mike.aframe.database.annotate.Id;
+
 /**
  * 类名: NavBean <br/>
  * 功能: 顶部菜单. <br/>
@@ -23,8 +25,26 @@ import java.io.Serializable;
  * @version  	 
  */
 public class NavBean implements Serializable{
+	@Id
+	String md5 = "";
 	String menu = "";
 	String menuUrl = "";
+	
+	/** 1 ：特别关注 
+	 *  2：青年文摘
+	 *  3：读者
+	 *  4：故事会
+	 * */
+	int category = 1;
+	
+	int isShow = 1;
+	
+	public String getMd5() {
+		return md5;
+	}
+	public void setMd5(String md5) {
+		this.md5 = md5;
+	}
 	public String getMenu() {
 		return menu;
 	}
@@ -37,7 +57,19 @@ public class NavBean implements Serializable{
 	public void setMenuUrl(String menuUrl) {
 		this.menuUrl = menuUrl;
 	}
+	public int getCategory() {
+		return category;
+	}
+	public void setCategory(int category) {
+		this.category = category;
+	}
+	public int getIsShow() {
+		return isShow;
+	}
+	public void setIsShow(int isShow) {
+		this.isShow = isShow;
+	}
 	
-
+	
 }
 

@@ -29,7 +29,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -95,10 +94,6 @@ public class MainFragment extends BaseFragment{
 	
 	public MainFragment(){
 	}
-	public MainFragment(String urls){
-		this.urls = urls;
-	}
-	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -150,7 +145,7 @@ public class MainFragment extends BaseFragment{
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
-			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+			 ViewGroup container,  Bundle savedInstanceState) {
 		mView = LayoutInflater.from(mActivity).inflate(R.layout.fragment_main, null);
 		mHeadView = LayoutInflater.from(mActivity).inflate(R.layout.layout_roll_img,null);
 		initView();

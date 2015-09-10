@@ -1,4 +1,5 @@
 /**
+<<<<<<< HEAD
  * 工程名: MainActivity
  * 文件名: ArticleFragmentPagerAdapter.java
  * 包名: com.sepcialfocus.android.ui.adapter
@@ -6,6 +7,12 @@
  * Copyright (c) 2015, 北京小马过河教育科技有限公司 All Rights Reserved.
  * http://www.xiaoma.com/
  * Mail: leixun@xiaoma.cn
+=======
+ * 工程名: SpecialFocus
+ * 文件名: ArticleFragmentPagerAdapter.java
+ * 包名: com.sepcialfocus.android.ui.adapter
+ * 日期: 2015年9月9日下午12:33:57
+>>>>>>> 6c6aabef0094358d9eb89163afde2a9553d40611
  * QQ: 378640336
  *
 */
@@ -13,6 +20,7 @@
 package com.sepcialfocus.android.ui.adapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,7 +31,11 @@ import android.view.ViewGroup;
 /**
  * 类名: ArticleFragmentPagerAdapter <br/>
  * 功能: TODO 添加功能描述. <br/>
+<<<<<<< HEAD
  * 日期: 2015-9-9 上午7:27:03 <br/>
+=======
+ * 日期: 2015年9月9日 下午12:33:57 <br/>
+>>>>>>> 6c6aabef0094358d9eb89163afde2a9553d40611
  *
  * @author   leixun
  * @version  	 
@@ -70,12 +82,15 @@ public class ArticleFragmentPagerAdapter extends FragmentPagerAdapter {
     public void setFragments(ArrayList<Fragment> fragments) {
         if (this.fragments != null) {
             FragmentTransaction ft = fm.beginTransaction();
-            for (Fragment f : this.fragments) {
-                ft.remove(f);
+            List<Fragment> fs = fm.getFragments();
+            if(fs!=null){
+            	for (Fragment f : fs) {
+            		ft.remove(f);
+            	}
+            	ft.commit();
+            	ft = null;
+            	fm.executePendingTransactions();
             }
-            ft.commit();
-            ft = null;
-            fm.executePendingTransactions();
         }
         this.fragments = fragments;
         notifyDataSetChanged();
