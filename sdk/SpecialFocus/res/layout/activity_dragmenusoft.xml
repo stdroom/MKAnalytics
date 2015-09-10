@@ -35,14 +35,14 @@
                 <TextView
                     android:id="@+id/my_category_text"
                     style="@style/subscribe_my_tip_text"
-                    android:text="我的频道" />
+                    android:text="我的栏目" />
 
                 <TextView
                     android:id="@+id/my_category_tip_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12.0dip"
-                    android:text="单击增删频道，长按拖拽排序"
+                    android:text="单击增删栏目，长按拖拽排序"
                     android:textColor="@color/subscribe_tip_text"
                     android:textSize="11.0sp" />
             </LinearLayout>
@@ -75,7 +75,7 @@
                 android:textSize="13sp"
                 android:layout_marginBottom="14.0dip"
                 android:layout_marginLeft="10.0dip"
-                android:text="跟多频道" />
+                android:text="更多栏目" />
 
             <com.sepcialfocus.android.widgets.OtherGridView
                 android:id="@+id/otherGridView"

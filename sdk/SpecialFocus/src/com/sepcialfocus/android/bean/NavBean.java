@@ -29,6 +29,7 @@ public class NavBean implements Serializable{
 	String md5 = "";
 	String menu = "";
 	String menuUrl = "";
+	int orderId = 0;
 	
 	/** 1 ：特别关注 
 	 *  2：青年文摘
@@ -69,7 +70,12 @@ public class NavBean implements Serializable{
 	public void setIsShow(int isShow) {
 		this.isShow = isShow;
 	}
-	
+	public int getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
 	
 }
 

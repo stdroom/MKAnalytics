@@ -29,6 +29,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mike.aframe.database.KJDB;
 import com.mike.aframe.utils.MD5Utils;
@@ -96,6 +97,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
         
         
 		mTitleTv = (TextView)findViewById(R.id.tv_title);
+		mTitleTv.setText("栏目设置");
 		mBackImg = (ImageView)findViewById(R.id.img_title_back);
 		mBackImg.setOnClickListener(this);
 		
@@ -112,6 +114,11 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
 	public void onClick(View arg0) {
 		switch(arg0.getId()){
 		case R.id.img_title_back:
+			if(userChannelList!=null && userChannelList.size()<1){
+				Toast.makeText(DragSortMenuActivity.this, "大哥，喜欢阅读的人运气都不会太差! \n您加一个栏目吧", Toast.LENGTH_LONG).show();
+				return;
+			}
+			saveChannel();
 			setResult(RESULT_OK, new Intent());
 			finish();
 			break;
@@ -128,7 +135,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
         switch (parent.getId()) {
             case R.id.userGridView:
                 // position为 0，1 的不可以进行任何操作
-                if (position != 0 && position != 1) {
+                if (position!=0) {
                     final ImageView moveImageView = getView(view);
                     if (moveImageView != null) {
                         TextView newTextView = (TextView) view.findViewById(R.id.text_item);
@@ -139,7 +146,6 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                         otherAdapter.setVisible(false);
                         // 添加到最后一个
                         otherAdapter.addItem(channel);
-                        channel.setIsShow(0);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -152,7 +158,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                                     moveAnim(moveImageView, startLocation, endLocation, channel,
                                             userGridView);
                                     userAdapter.setRemove(position);
-                                    mDb.update(channel,"md5 = "+MD5Utils.md5(channel.getMenu()+channel.getMenuUrl()));
+                                    updateChannel(channel,0);
                                 } catch (Exception localException) {
                                 }
                             }
@@ -168,7 +174,6 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                     newTextView.getLocationInWindow(startLocation);
                     final NavBean channel = ((OtherAdapter) parent.getAdapter())
                             .getItem(position);
-                    channel.setIsShow(1);
                     userAdapter.setVisible(false);
                     // 添加到最后一个
                     userAdapter.addItem(channel);
@@ -183,7 +188,7 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                                 moveAnim(moveImageView, startLocation, endLocation, channel,
                                         otherGridView);
                                 otherAdapter.setRemove(position);
-                                mDb.update(channel,"md5 = "+MD5Utils.md5(channel.getMenu()+channel.getMenuUrl()));
+                                updateChannel(channel,1);
                             } catch (Exception localException) {
                             }
                         }
@@ -304,9 +309,28 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
 
     /** 退出时候保存选择后数据库的设置 */
     void saveChannel() {
-        
+    	if(userChannelList!=null && userChannelList.size()>0){
+    		int length = userChannelList.size();
+    		for(int i =0 ; i < length ; i ++){
+    			NavBean channel = userChannelList.get(i);
+    			channel.setOrderId(i);
+    			mDb.update(channel,"md5 = '"+MD5Utils.md5(channel.getMenu()+channel.getMenuUrl())+"'");
+    		}
+    	}
     }
 	
-
+    private void updateChannel(NavBean bean , int visible){
+    	NavBean channel = new NavBean();
+    	if(bean!=null){
+    		channel.setCategory(bean.getCategory());
+    		channel.setIsShow(visible);
+    		channel.setMd5(bean.getMd5());
+    		channel.setMenu(bean.getMenu());
+    		channel.setMenuUrl(bean.getMenuUrl());
+    	}
+    	if(mDb!=null){
+    		mDb.update(channel,"md5 = '"+MD5Utils.md5(channel.getMenu()+channel.getMenuUrl())+"'");
+    	}
+    }
 }
 

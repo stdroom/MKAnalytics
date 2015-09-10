@@ -81,7 +81,7 @@ public class DragAdapter  extends BaseAdapter {
         item_text = (TextView) view.findViewById(R.id.text_item);
         NavBean channel = getItem(position);
         item_text.setText(channel.getMenu());
-        if ((position == 0) || (position == 1)) {
+        if (position == 0) {
             // item_text.setTextColor(context.getResources().getColor(R.color.black));
             item_text.setEnabled(false);
         }

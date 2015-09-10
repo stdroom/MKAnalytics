@@ -196,11 +196,12 @@ public class MainActivity extends BaseFragmentActivity
 
 	@SuppressWarnings("unchecked")
 	private ArrayList<NavBean> getMenuList(){
-		List<NavBean> list2  = mKJDb.findAllByWhere(NavBean.class, "isShow = 1");
-		if(list2!=null && list2.size()>0){
-			return (ArrayList<NavBean>) list2;
+		List<NavBean> list  = mKJDb.findAllByWhere(NavBean.class, "isShow = 1");
+		if(list!=null && list.size()>0){
+			return (ArrayList<NavBean>) list;
+		}else{
+			list = new ArrayList<NavBean>();
 		}
-		ArrayList<NavBean> list = new ArrayList<NavBean>();
 		String[] menuName = getResources().getStringArray(R.array.menu_str);
 		String[] menuUrl = getResources().getStringArray(R.array.menu_url);
 		for(int i = 0 ; i<menuName.length ; i++){
@@ -211,8 +212,9 @@ public class MainActivity extends BaseFragmentActivity
 			bean.setIsShow(1);
 			bean.setCategory(1);
 			list.add(bean);
+			mKJDb.save(bean);
 		}
-		return list;
+		return (ArrayList<NavBean>)list;
 	}
 	
 	private void initMenu(){
@@ -255,7 +257,7 @@ public class MainActivity extends BaseFragmentActivity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode,resultCode,data);
-		if(requestCode == AppConstant.JUMP_CODE){
+		if(requestCode == AppConstant.JUMP_CODE && resultCode == RESULT_OK){
 			initMenu();
 			initFragment();
 		}
