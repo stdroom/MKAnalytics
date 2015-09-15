@@ -33,7 +33,7 @@ class Ums extends CI_Controller {
         $this -> load -> model($servicePrefix . '/uploadlog', 'uploadlog');
         $this -> load -> model($servicePrefix . '/usertag', 'usertag');
     }
-
+    
     /*
      * Interface to accept event log by client
      * Must pass parameters:appkey,event_identifier,time,activity,version
@@ -46,7 +46,6 @@ class Ums extends CI_Controller {
             echo json_encode($ret);
             return;
         }
-
         $encoded_content = $_POST["content"];
         log_message("debug", $encoded_content);
         $content = json_decode($encoded_content);

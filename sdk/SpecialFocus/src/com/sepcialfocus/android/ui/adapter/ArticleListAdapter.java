@@ -109,7 +109,8 @@ public class ArticleListAdapter extends BaseAdapter{
 			}
 		}
 		if(!"".equals(bean.getImgUrl()+"")){
-			kjBitMap.display(holder.mArticleImg,URLs.HOST+bean.getImgUrl());
+			kjBitMap.display(holder.mArticleImg,URLs.HOST+bean.getImgUrl(),
+					holder.mArticleImg.getWidth(),holder.mArticleImg.getHeight());
 		}
 		return convertView;
 	}

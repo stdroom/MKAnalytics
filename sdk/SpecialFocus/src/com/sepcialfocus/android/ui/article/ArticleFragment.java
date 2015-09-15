@@ -1,5 +1,5 @@
 /**
- * ������: SpecialFocus
+` * ������: SpecialFocus
  * �ļ���: ArticleFragment.java
  * ����: com.sepcialfocus.android.ui
  * ����: 2015-9-1����8:47:05

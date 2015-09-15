@@ -14,8 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/app_bg_color"
-            android:divider="@null"
-            android:dividerHeight="1px" >
+            android:divider="#999999"
+            android:dividerHeight="2px" >
         </ListView>
     </com.sepcialfocus.android.ui.widget.PullToRefreshView>
 
