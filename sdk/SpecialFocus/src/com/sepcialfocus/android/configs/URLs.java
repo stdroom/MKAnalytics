@@ -23,6 +23,10 @@ public class URLs {
 	public static final String HOST = "http://www.de99.cn/";
 	
 	public static final String ONE = HOST+"news/1/";
+	
+	
+	/** 获取最新版本信息 */
+	public final static String URL_GET_CHECK_VERSION = "http://ammike.duapp.com/update";
 
 }
 

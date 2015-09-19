@@ -17,14 +17,13 @@ import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,10 @@ import com.sepcialfocus.android.BaseFragment;
 import com.sepcialfocus.android.R;
 import com.sepcialfocus.android.bean.ArticleItemBean;
 import com.sepcialfocus.android.bean.NavBean;
+import com.sepcialfocus.android.bean.PagesInfo;
 import com.sepcialfocus.android.configs.AppConstant;
+import com.sepcialfocus.android.parse.specialfocus.ArticleItemListParse;
+import com.sepcialfocus.android.parse.specialfocus.ArticleItemPagesParse;
 import com.sepcialfocus.android.ui.adapter.ArticleListAdapter;
 import com.sepcialfocus.android.ui.widget.PullToRefreshView;
 import com.sepcialfocus.android.ui.widget.PullToRefreshView.OnFooterRefreshListener;
@@ -54,9 +56,10 @@ import com.sepcialfocus.android.ui.widget.PullToRefreshView.OnFooterRefreshListe
  * @author leixun
  * @version 
  */
-public class ArticleFragment extends BaseFragment{
+public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+	private SwipeRefreshLayout mSwipeLayout;
 	private ArrayList<ArticleItemBean> mArticleList;
-	private PullToRefreshView mArticle_pullview;
+//	private PullToRefreshView mArticle_pullview;
 	private ListView mArticle_listview;
 	private ArticleListAdapter mArticleAdapter;
 	private View mView;
@@ -87,6 +90,8 @@ public class ArticleFragment extends BaseFragment{
 	
 	@Override
 	protected void initView() {
+		mSwipeLayout = (SwipeRefreshLayout)mView.findViewById(R.id.swipe_container);
+		initSwapLayout();
 		mLoadingLayout = (RelativeLayout)mView.findViewById(R.id.layout_loading_bar);
 		mArticle_listview = (ListView)mView.findViewById(R.id.article_listview);
 		mArticle_listview.setOnItemClickListener(new OnItemClickListener() {
@@ -98,17 +103,17 @@ public class ArticleFragment extends BaseFragment{
 				startActivity(intent);
 			}
 		});
-		mArticle_pullview = (PullToRefreshView)mView.findViewById(R.id.article_pullview);
-		mArticle_pullview.setOnFooterRefreshListener(new OnFooterRefreshListener() {
-			@Override
-			public void onFooterRefresh(PullToRefreshView view) {
-				if(isPullRrefreshFlag){
-					new Loadhtml(nextUrl).execute("","","");
-				} else {
-					mArticle_pullview.onFooterRefreshComplete();
-				}
-			}
-		});
+//		mArticle_pullview = (PullToRefreshView)mView.findViewById(R.id.article_pullview);
+//		mArticle_pullview.setOnFooterRefreshListener(new OnFooterRefreshListener() {
+//			@Override
+//			public void onFooterRefresh(PullToRefreshView view) {
+//				if(isPullRrefreshFlag){
+//					new Loadhtml(nextUrl).execute("","","");
+//				} else {
+//					mArticle_pullview.onFooterRefreshComplete();
+//				}
+//			}
+//		});
 	}
 
 	@Override
@@ -157,98 +162,12 @@ public class ArticleFragment extends BaseFragment{
                 }
             	doc = Jsoup.connect(urls).timeout(5000).get();
                  Document content = Jsoup.parse(doc.toString());
-                 Element article = content.getElementById("article");
-                 Element nextPage = content.getElementById("pages");
-                 Elements nextelement = nextPage.getElementsByTag("a");
-                 isPullRrefreshFlag = false;
-                 for(Element element:nextelement){
-                	 if("下一页".equals(element.text())){
-                		 isPullRrefreshFlag = true;
-                		 nextUrl = ArticleFragment.this.urls + element.attr("href").trim();
-                		 break;
-                	 }
-                	 Log.d("element",element.toString());
-                 }
-                 if(!isPullRrefreshFlag){
-                	 nextUrl = "";
-                 }
-                 Log.d("element", article.toString());
-                 Elements elements = article.children();
-                 ArrayList<ArticleItemBean> tempList = new ArrayList<ArticleItemBean>();
-                 for(Element linkss : elements)
-                 {	 
-                	 if(!linkss.hasAttr("class") || !"post".equals(linkss.attr("class"))){
-                		 continue;
-                	 }
-                	 String title = "";
-                 	 String imgUrl = "";
-                 	 String summary = "";
-                 	 String link = "";
-                	 Elements titleImg = linkss.getElementsByTag("img");
-                	 for(Element bean : titleImg){
-                		 if(bean.hasAttr("alt")){	// 标题
-                			 title = bean.attr("alt");
-                		 }
-                		 if(bean.hasAttr("src")){	// 图像地址
-                			 imgUrl = bean.attr("src");
-                		 }
-                	 }
-                	 
-                	 Elements contentUrl = linkss.getElementsByClass("summary");
-                	 for(Element bean:contentUrl){
-                		 if(bean.hasAttr("class")){	// 内容摘要
-                			 summary = bean.text();
-                		 }
-                		 Elements contentBean = bean.getElementsByTag("a");
-                		 for(Element bean2:contentBean){
-                			 if(bean2.hasAttr("href")){	// 跳转链接
-                				 link = bean2.attr("href");
-                			 }
-                		 }
-                	 }
-                	 String time = "";
-                	 ArrayList<String> tags = new ArrayList<String>();
-                	 String tagUrl = "";
-                	 Elements timeTag = linkss.getElementsByClass("postmeta");
-                	 for(Element links: timeTag){
-                		 Elements spans = links.getElementsByTag("span");
-                		 for(Element bean:spans){
-                			 if(bean.hasAttr("class")){
-                				 if("left_author_span".equals(bean.attr("class"))){
-                					 time = bean.text();
-                					 continue;
-                				 }
-                				 if("left_tag_span".equals(bean.attr("class"))){
-                					 Elements childen = bean.children();
-                					 for(Element child:childen){
-                						 if(child.hasAttr("href")){
-                							 tagUrl = child.attr("href");
-                							 tags.add(child.text());
-                						 }
-                					 }
-                				 }
-                			 }
-                		 }
-                		 
-                		 
-                	 }
-                	 ArticleItemBean bean = new ArticleItemBean();
-                	 bean.setTitle(title);
-                	 bean.setDate(time);
-                	 bean.setImgUrl(imgUrl);
-                	 bean.setSummary(summary);
-                	 bean.setUrl(link);
-                	 bean.setTags(tags);
-                	 bean.setMd5(MD5Utils.md5(link));
-                	 ArticleItemBean selectBean = kjDb.findById(bean.getMd5(), ArticleItemBean.class);
-                	 if(selectBean==null){
-                		 mArticleList.add(bean);
-                	 }
-                 }
-                 
+                 PagesInfo info = ArticleItemPagesParse.getPagesInfo(urls, content);
+                 isPullRrefreshFlag = info.getHasNextPage();
+                 nextUrl = info.getNextPageUrl();
+                 mArticleList.addAll(ArticleItemListParse.getArticleItemList(kjDb, content));
                 
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -260,9 +179,9 @@ public class ArticleFragment extends BaseFragment{
             super.onPostExecute(result);
 //            Log.d("doc", doc.toString().trim());
             setLoadingVisible(false);
-            mArticle_pullview.setVisibility(View.VISIBLE);
+            mSwipeLayout.setVisibility(View.VISIBLE);
             mArticleAdapter.notifyDataSetChanged();
-            mArticle_pullview.onFooterRefreshComplete();
+//            mArticle_pullview.onFooterRefreshComplete();
         }
 
         @Override
@@ -272,7 +191,7 @@ public class ArticleFragment extends BaseFragment{
             if(mArticleList!=null 
             		&& mArticleList.size()==0){
             	setLoadingVisible(true);
-            	mArticle_pullview.setVisibility(View.GONE);
+            	mSwipeLayout.setVisibility(View.GONE);
             }
         }
         
@@ -303,6 +222,33 @@ public class ArticleFragment extends BaseFragment{
         	e.printStackTrace();
         	mArticleList = new ArrayList<ArticleItemBean>();
         }
+	}
+
+	@Override
+	public void onRefresh() {
+		new Handler().post(new Runnable() {
+			@Override
+			public void run() {
+				Document doc;
+				try {
+					doc = Jsoup.connect(urls).timeout(5000).get();
+					Document content = Jsoup.parse(doc.toString());
+					mArticleList.addAll(0, ArticleItemListParse.getArticleItemList(kjDb, content));
+					mArticleAdapter.notifyDataSetChanged();
+					mSwipeLayout.setRefreshing(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+	}
+	
+	private void initSwapLayout(){
+		mSwipeLayout.setColorSchemeColors(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light, android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+		mSwipeLayout.setOnRefreshListener(this);
 	}
 
 }
