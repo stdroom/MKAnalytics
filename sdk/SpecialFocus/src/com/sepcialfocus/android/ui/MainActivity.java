@@ -22,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -31,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mike.aframe.database.KJDB;
 import com.mike.aframe.utils.MD5Utils;
@@ -45,6 +47,8 @@ import com.sepcialfocus.android.ui.adapter.MainPagerAdapter;
 import com.sepcialfocus.android.ui.article.ArticleFragment;
 import com.sepcialfocus.android.ui.article.MainFragment;
 import com.sepcialfocus.android.ui.settting.DragSortMenuActivity;
+import com.sepcialfocus.android.ui.settting.MineActivity;
+import com.sepcialfocus.android.utils.UpdateManager;
 
 /**
  * ����: MainActivity <br/>
@@ -76,7 +80,9 @@ public class MainActivity extends BaseFragmentActivity
 	private ImageView mDragSoftImg;
 	
 	private KJDB mKJDb;
-	
+
+	private long exitTime = 0;
+	private ImageView mJumpMineImg;
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -92,9 +98,20 @@ public class MainActivity extends BaseFragmentActivity
 		mKJDb = KJDB.create(this);
 		initMenu();
 		initView();
+		
+		UpdateManager.getUpdateManager().checkAppUpdate(this, false);
 	}
 	
 	protected void initView(){
+		mJumpMineImg = (ImageView)findViewById(R.id.jump_mine_img);
+		mJumpMineImg.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this,MineActivity.class);
+				startActivity(intent);
+			}
+		});
 		mDragSoftImg = (ImageView)findViewById(R.id.drag_soft_img);
 		mDragSoftImg.setOnClickListener(new View.OnClickListener() {
 			
@@ -261,6 +278,25 @@ public class MainActivity extends BaseFragmentActivity
 			initMenu();
 			initFragment();
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		/** 一个鄙人感觉不错的退出体验*/
+		if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){   
+	        if((System.currentTimeMillis()-exitTime) > 2000){  
+	            Toast.makeText(this, 
+	            		getResources().getString(R.string.common_back_str),
+	            		Toast.LENGTH_SHORT)
+	            		.show();                                
+	            exitTime = System.currentTimeMillis();   
+	        } else {
+	            finish();
+	            System.exit(0);
+	        }
+	        return true;   
+	    }
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	

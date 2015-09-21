@@ -26,7 +26,7 @@ public class URLs {
 	
 	
 	/** 获取最新版本信息 */
-	public final static String URL_GET_CHECK_VERSION = "http://ammike.duapp.com/update";
+	public final static String URL_GET_CHECK_VERSION = "http://joyread.duapp.com/update";
 
 }
 

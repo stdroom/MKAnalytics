@@ -1,14 +1,3 @@
-/**
- * ������: SpecialFocus
- * �ļ���: ArticleFragment.java
- * ����: com.sepcialfocus.android.ui
- * ����: 2015-9-1����8:47:05
- * Copyright (c) 2015, ����С����ӽ����Ƽ����޹�˾ All Rights Reserved.
- * http://www.xiaoma.com/
- * Mail: leixun@xiaoma.cn
- * QQ: 378640336
- *
-*/
 
 package com.sepcialfocus.android.ui.article;
 
@@ -57,9 +46,9 @@ import com.sepcialfocus.android.ui.widget.PullToRefreshView.OnFooterRefreshListe
  * @version 
  */
 public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
-	private SwipeRefreshLayout mSwipeLayout;
+//	private SwipeRefreshLayout mSwipeLayout;
 	private ArrayList<ArticleItemBean> mArticleList;
-//	private PullToRefreshView mArticle_pullview;
+	private PullToRefreshView mArticle_pullview;
 	private ListView mArticle_listview;
 	private ArticleListAdapter mArticleAdapter;
 	private View mView;
@@ -90,8 +79,8 @@ public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.
 	
 	@Override
 	protected void initView() {
-		mSwipeLayout = (SwipeRefreshLayout)mView.findViewById(R.id.swipe_container);
-		initSwapLayout();
+//		mSwipeLayout = (SwipeRefreshLayout)mView.findViewById(R.id.swipe_container);
+//		initSwapLayout();
 		mLoadingLayout = (RelativeLayout)mView.findViewById(R.id.layout_loading_bar);
 		mArticle_listview = (ListView)mView.findViewById(R.id.article_listview);
 		mArticle_listview.setOnItemClickListener(new OnItemClickListener() {
@@ -103,17 +92,17 @@ public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.
 				startActivity(intent);
 			}
 		});
-//		mArticle_pullview = (PullToRefreshView)mView.findViewById(R.id.article_pullview);
-//		mArticle_pullview.setOnFooterRefreshListener(new OnFooterRefreshListener() {
-//			@Override
-//			public void onFooterRefresh(PullToRefreshView view) {
-//				if(isPullRrefreshFlag){
-//					new Loadhtml(nextUrl).execute("","","");
-//				} else {
-//					mArticle_pullview.onFooterRefreshComplete();
-//				}
-//			}
-//		});
+		mArticle_pullview = (PullToRefreshView)mView.findViewById(R.id.article_pullview);
+		mArticle_pullview.setOnFooterRefreshListener(new OnFooterRefreshListener() {
+			@Override
+			public void onFooterRefresh(PullToRefreshView view) {
+				if(isPullRrefreshFlag){
+					new Loadhtml(nextUrl).execute("","","");
+				} else {
+					mArticle_pullview.onFooterRefreshComplete();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -179,9 +168,9 @@ public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.
             super.onPostExecute(result);
 //            Log.d("doc", doc.toString().trim());
             setLoadingVisible(false);
-            mSwipeLayout.setVisibility(View.VISIBLE);
+//            mSwipeLayout.setVisibility(View.VISIBLE);
             mArticleAdapter.notifyDataSetChanged();
-//            mArticle_pullview.onFooterRefreshComplete();
+            mArticle_pullview.onFooterRefreshComplete();
         }
 
         @Override
@@ -191,7 +180,7 @@ public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.
             if(mArticleList!=null 
             		&& mArticleList.size()==0){
             	setLoadingVisible(true);
-            	mSwipeLayout.setVisibility(View.GONE);
+//            	mSwipeLayout.setVisibility(View.GONE);
             }
         }
         
@@ -235,7 +224,7 @@ public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.
 					Document content = Jsoup.parse(doc.toString());
 					mArticleList.addAll(0, ArticleItemListParse.getArticleItemList(kjDb, content));
 					mArticleAdapter.notifyDataSetChanged();
-					mSwipeLayout.setRefreshing(false);
+//					mSwipeLayout.setRefreshing(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -244,12 +233,12 @@ public class ArticleFragment extends BaseFragment implements SwipeRefreshLayout.
 		});
 	}
 	
-	private void initSwapLayout(){
-		mSwipeLayout.setColorSchemeColors(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light, android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-		mSwipeLayout.setOnRefreshListener(this);
-	}
+//	private void initSwapLayout(){
+//		mSwipeLayout.setColorSchemeColors(android.R.color.holo_blue_bright,
+//                android.R.color.holo_green_light, android.R.color.holo_orange_light,
+//                android.R.color.holo_red_light);
+//		mSwipeLayout.setOnRefreshListener(this);
+//	}
 
 }
 

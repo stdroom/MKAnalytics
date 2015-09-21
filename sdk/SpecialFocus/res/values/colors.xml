@@ -34,9 +34,11 @@
     <color name="app_divider_green_color">#27c5a4</color>
     <color name="app_divider_c8">#c8c8c8</color>
     <color name="app_divider_d7">#d7d7d7</color>
+    <color name="common_divider_color">#FFCCCCCC</color>
     
     <!-- app常用区域背景色 -->
     <color name="app_bg_color">#F4F4F4</color>
+    <color name="normal_background">#FFFdFEFF</color>
     
     <!-- app常用字体颜色 -->
     <color name="text_color_white">#ffffff</color>

@@ -89,7 +89,7 @@ public class ArticleListAdapter extends BaseAdapter{
 		holder.mArticleTagOneTv.setVisibility(View.GONE);
 		holder.mArticleTagTwoTv.setVisibility(View.GONE);
 		holder.mArticleTagThrTv.setVisibility(View.GONE);
-		holder.mArticleImg.setImageDrawable(this.mContext.getResources().getDrawable(R.drawable.ic_launcher));
+		holder.mArticleImg.setImageDrawable(this.mContext.getResources().getDrawable(R.drawable.icon));
 		if(tags!=null && tags.size()>0){
 			int length = tags.size();
 			if(length > 3){
@@ -109,7 +109,8 @@ public class ArticleListAdapter extends BaseAdapter{
 			}
 		}
 		if(!"".equals(bean.getImgUrl()+"")){
-			kjBitMap.display(holder.mArticleImg,URLs.HOST+bean.getImgUrl());
+			kjBitMap.display(holder.mArticleImg,URLs.HOST+bean.getImgUrl(),
+					holder.mArticleImg.getWidth(),holder.mArticleImg.getHeight());
 		}
 		return convertView;
 	}

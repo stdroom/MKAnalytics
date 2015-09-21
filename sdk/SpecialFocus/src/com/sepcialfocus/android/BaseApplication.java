@@ -25,6 +25,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sepcialfocus.android.configs.AppConfig;
 
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 /**
  * ����: BaseApplication <br/>
@@ -119,6 +122,12 @@ public class BaseApplication extends Application{
 		if(data.exists())
 			exist = true;
 		return exist;
+	}
+	
+	public boolean isNetworkConnected(){
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo ni = cm.getActiveNetworkInfo();
+		return ni != null && ni.isConnectedOrConnecting();
 	}
 }
 

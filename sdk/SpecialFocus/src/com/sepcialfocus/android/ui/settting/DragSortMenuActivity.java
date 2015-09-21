@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -114,16 +115,11 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
 	public void onClick(View arg0) {
 		switch(arg0.getId()){
 		case R.id.img_title_back:
-			if(userChannelList!=null && userChannelList.size()<1){
-				Toast.makeText(DragSortMenuActivity.this, "大哥，喜欢阅读的人运气都不会太差! \n您加一个栏目吧", Toast.LENGTH_LONG).show();
-				return;
-			}
-			saveChannel();
-			setResult(RESULT_OK, new Intent());
-			finish();
+			goBack();
 			break;
 		}
 	}
+	
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -175,8 +171,16 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
                     final NavBean channel = ((OtherAdapter) parent.getAdapter())
                             .getItem(position);
                     userAdapter.setVisible(false);
+                	NavBean channels = new NavBean();
+                	if(channel!=null){
+                		channels.setCategory(channel.getCategory());
+                		channels.setIsShow(1);
+                		channels.setMd5(channel.getMd5());
+                		channels.setMenu(channel.getMenu());
+                		channels.setMenuUrl(channel.getMenuUrl());
+                	}
                     // 添加到最后一个
-                    userAdapter.addItem(channel);
+                    userAdapter.addItem(channels);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -331,6 +335,24 @@ public class DragSortMenuActivity extends BaseFragmentActivity implements View.O
     	if(mDb!=null){
     		mDb.update(channel,"md5 = '"+MD5Utils.md5(channel.getMenu()+channel.getMenuUrl())+"'");
     	}
+    }
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){ 
+			goBack();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+    
+    private void goBack(){
+    	if(userChannelList!=null && userChannelList.size()<1){
+			Toast.makeText(DragSortMenuActivity.this, "大哥，喜欢阅读的人运气都不会太差! \n您加一个栏目吧", Toast.LENGTH_LONG).show();
+			return;
+		}
+		saveChannel();
+		setResult(RESULT_OK, new Intent());
+		finish();
     }
 }
 
